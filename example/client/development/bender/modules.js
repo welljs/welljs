@@ -5,7 +5,6 @@
 	var Module = function (name, fn) {
 		this.name = name;
 		this.deps = [];
-	  this.fn = fn;
 		try {
 			this.implementation = fn.call(this, app);
 		}
@@ -35,7 +34,7 @@
 	};
 	_.extend(Controller.prototype, {
 		get: function (name) {
-			return this.modules[name].fn(app);
+			return this.modules[name].implementation;
 		},
 
 		define: function (module, fn) {
