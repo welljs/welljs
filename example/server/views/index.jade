@@ -1,0 +1,9 @@
+doctype html
+html(lang="en")
+    meta(charset="UTF-8")
+    if (production)
+        include prod_header
+    else
+        include dev_header
+    body
+        div.workspace.priceformer-widget
