@@ -1,5 +1,6 @@
 benderDefine('Views:Pages:PageOne', function (app) {
 	this.configure({
+		layout: 'Main',
 		template: 'Pages:PageOne',
 		route: '/'
 	});

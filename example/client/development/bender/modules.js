@@ -5,6 +5,7 @@
 	var Module = function (name, fn) {
 		this.name = name;
 		this.deps = [];
+		this.config = {};
 		try {
 			this.implementation = fn.call(this, app);
 		}
@@ -20,9 +21,10 @@
 			return this;
 		},
 		configure: function (options) {
-			debugger;
+			this.config = options;
 			return this;
 		}
+
 	});
 
 
