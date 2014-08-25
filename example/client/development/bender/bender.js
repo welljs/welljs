@@ -30,7 +30,9 @@
 				[
 					'Bender:Models',
 					'Bender:Templates',
-					'Bender:Views'
+					'Bender:Views',
+					this.options.router || 'Bender:Router',
+					this.options.strategy || 'Bender:Strategy'
 				],
 				this.onCoreLoaded.bind(this),
 				this.onCoreLoadError.bind(this)
@@ -43,7 +45,7 @@
 			this.Views = new (Modules.get('Bender:Views'));
 			this.Templates = new (Modules.get('Bender:Templates'));
 			this.Events = _.extend(Backbone.Events, {});
-
+			this.Router = new(Modules.get('Bender:Router'));
 			//starting app strategy
 			new this.Strategy(this);
 		},
