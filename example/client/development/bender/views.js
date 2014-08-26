@@ -1,6 +1,8 @@
 benderDefine('Bender:Views', function (app) {
 	return function(){
-		var Controller = function () {};
+		var Controller = function () {
+			app.Events.on('Router:PageChanged', this.tryToRender, this);
+		};
 		_.extend(Controller.prototype, {
 			views: {},
 			get: function (viewName) {
@@ -16,6 +18,7 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			tryToRender: function (route, params) {
+				debugger;
 				!this.isOverlayVisible && this.showOverlay();
 				var mod = app.Modules.get(this.findByRoute(route));
 				if (!mod)

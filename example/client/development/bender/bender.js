@@ -1,9 +1,9 @@
 (function () {
+	'use strict';
 	var App = function (opts) {
 		this.options = opts;
-		this.Strategy = (typeof opts.strategy === 'function')
-			? opts.strategy
-			: function(){};
+		!opts.router && (this.options.router = 'Bender:Router');
+		!opts.strategy && (this.options.strategy = 'Bender:Strategy');
 		this.init();
 	};
 
@@ -12,7 +12,7 @@
 			requirejs.config({
 				baseUrl: this.options.appPath,
 				paths: {
-					views: '/views',
+					views: '/my-app/views',
 					bender: '/bender'
 				}
 			});
@@ -31,8 +31,8 @@
 					'Bender:Models',
 					'Bender:Templates',
 					'Bender:Views',
-					this.options.router || 'Bender:Router',
-					this.options.strategy || 'Bender:Strategy'
+					this.options.router,
+					this.options.strategy
 				],
 				this.onCoreLoaded.bind(this),
 				this.onCoreLoadError.bind(this)
@@ -41,13 +41,13 @@
 
 		onCoreLoaded: function () {
 			var Modules = this.Modules;
+			this.Events = _.extend(Backbone.Events, {});
 			this.Models = new (Modules.get('Bender:Models'));
 			this.Views = new (Modules.get('Bender:Views'));
 			this.Templates = new (Modules.get('Bender:Templates'));
-			this.Events = _.extend(Backbone.Events, {});
 			this.Router = new(Modules.get('Bender:Router'));
-			//starting app strategy
-			new this.Strategy(this);
+			this.Strategy = new(Modules.get(this.options.strategy));
+			return this;
 		},
 
 		onCoreLoadError: function (err) {
