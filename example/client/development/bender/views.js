@@ -11,11 +11,25 @@ benderDefine('Bender:Views', function (app) {
 				this.models[viewName] = impl;
 			},
 
-			//-----------------------------------------------
-			tryToRender: function (route, params) {
-				var page = this.getByRoute(route);
+			findByRoute: function (route) {
 
+			},
+
+			tryToRender: function (route, params) {
+				!this.isOverlayVisible && this.showOverlay();
+				var mod = app.Modules.get(this.findByRoute(route));
+				if (!mod)
+					app.Modules.require();
+			},
+
+			showOverlay: function () {
+				this.isOverlayVisible = true;
+			},
+
+			hideOverlay: function () {
+				this.isOverlayVisible = false;
 			}
+
 		});
 		return new Controller();
 	}
