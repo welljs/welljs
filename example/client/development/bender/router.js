@@ -6,6 +6,7 @@ benderDefine('Bender:Router', function (app) {
 
 		defineRoutes: function (routes) {
 			var router = this;
+			//Backbone routes
 			_.each(routes, function (route) {
 				this.route(route, 'proxy');
 			}, this);
@@ -21,8 +22,8 @@ benderDefine('Bender:Router', function (app) {
 
 		proxy: function () {
 			var args = this.parseUrl(Backbone.history.fragment);
-			this.currentPage = args.action === '/' ? '' : args.action;
-			app.Events.trigger('Router:PageChanged', args.action, args.params);
+			this.currentPage = args.route === '/' ? '' : args.route;
+			app.Events.trigger('Router:PageChanged', this.getRouteAction(args.route), args.params);
 		},
 
 		go: function (url) {
@@ -30,26 +31,30 @@ benderDefine('Bender:Router', function (app) {
 		},
 
 		configure: function (config) {
+			this.config= config;
 			this.defineRoutes(config.routes);
-			this.loadPages(config.pages);
+			this.beforeStart = config.beforeStart || function(){};
+			this.start();
 			return this;
 		},
 
-		loadPages: function (pages) {
-			app.Modules.require(pages, this.onPagesLoaded, function (err) {
-				console.log(err);
-			});
-			return this;
+		start: function () {
+			_.isFunction(this.beforeStart) && this.beforeStart();
+			Backbone.history.start();
 		},
 
 		onPagesLoaded: function () {
 			console.log(arguments);
 		},
 
-		parseUrl: function () {
+		getRouteAction: function (route) {
+			return this.config.actions[route];
+		},
+
+		parseUrl: function (url) {
 			var args = url.split('/');
 			return {
-				action: args[0] || '/',
+				route: args[0] || '/',
 				params: args[1] || ''
 			};
 		}

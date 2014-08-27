@@ -24,7 +24,6 @@
 			this.config = options;
 			return this;
 		}
-
 	});
 
 
@@ -47,6 +46,12 @@
 		init: function () {
 			window.benderDefine = this.define.bind(this);
 			return this;
+		},
+
+		findBy: function (criteria, value) {
+			return _.find(this.modules, function (module) {
+				return module.config[criteria] === value;
+			}, this);
 		},
 
 		//requirejs wrapper
