@@ -2,7 +2,7 @@ benderDefine('Views:Pages:Home', function (app) {
 	this.configure({
 		layout: 'Main',
 		template: 'Pages:Home',
-		route: '/home'
+		route: '/'
 	});
 	return function () {
 	  return app.Views.Base.extend({

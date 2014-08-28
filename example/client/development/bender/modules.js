@@ -20,9 +20,14 @@
 			this.deps.push(module);
 			return this;
 		},
+
 		configure: function (options) {
 			this.config = options;
 			return this;
+		},
+
+		isView: function () {
+			return this.config.type === 'Views';
 		}
 	});
 
@@ -38,8 +43,11 @@
 			return this.modules[name].implementation;
 		},
 
-		define: function (module, fn) {
-			this.modules[module] = new Module(module, fn);
+		define: function (moduleName, fn) {
+			var  module = new Module(moduleName, fn);
+			module.config['type'] = moduleName.split(':')[0];
+			this.modules[moduleName] = module;
+			app.Events.trigger('Modules:Defined', module);
 			return this;
 		},
 

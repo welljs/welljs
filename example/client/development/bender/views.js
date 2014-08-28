@@ -2,6 +2,7 @@ benderDefine('Bender:Views', function (app) {
 	return function(){
 		var Controller = function () {
 			app.Events.on('Router:PageChanged', this.tryToRender, this);
+			app.Events.on('Modules:Defined', this.onModuleDefined, this);
 		};
 		_.extend(Controller.prototype, {
 			//initialized views
@@ -16,8 +17,15 @@ benderDefine('Bender:Views', function (app) {
 				this.modules[viewName] = impl;
 			},
 
+			onModuleDefined: function (module) {
+				if (module.isView()) {
+					this.modules[module.name] = module;
+				}
+			},
+
 			tryToRender: function (action, params) {
-				var mod = app.Modules.findBy('route', action.route);
+				var mod = app.Modules.findBy('route', action.route),
+					controller = this;
 				//if module exist
 				if (mod) {
 					this.render(action.module, params);
@@ -26,8 +34,8 @@ benderDefine('Bender:Views', function (app) {
 				else{
 					this.showOverlay();
 					app.Modules.require([action.module], function () {
-						this.tryToRender(action, params);
-						this.hideOverlay();
+						controller.tryToRender(action, params);
+						controller	.hideOverlay();
 					}, this);
 				}
 			},

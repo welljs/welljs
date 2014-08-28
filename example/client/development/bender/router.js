@@ -48,7 +48,10 @@ benderDefine('Bender:Router', function (app) {
 		},
 
 		getRouteAction: function (route) {
-			return this.config.actions[route];
+			return {
+					module: this.config.actions[route],
+					route: route
+				};
 		},
 
 		parseUrl: function (url) {
