@@ -10,10 +10,9 @@
 			this.implementation = fn.call(this, app);
 		}
 		catch (e) {
-			console.log('error in module:');
-			console.log(name);
+			console.log('error in module: ' + name);
 		}
-
+		this.setType(name.split(':')[0]);
 	};
 	_.extend(Module.prototype, {
 		use: function (module) {
@@ -26,8 +25,16 @@
 			return this;
 		},
 
-		isView: function () {
-			return this.config.type === 'Views';
+		setType: function (type) {
+			switch (type) {
+				case 'Views': this.isView = true; break;
+				case 'Models': this.isModel = true; break;
+				case 'Collections': this.isCollection = true; break;
+				case 'Plugins': this.isPlugin = true; break;
+				case 'Bender': this.isCore = true; break;
+			}
+			this.config['type'] = type;
+			return this;
 		}
 	});
 
@@ -45,7 +52,6 @@
 
 		define: function (moduleName, fn) {
 			var  module = new Module(moduleName, fn);
-			module.config['type'] = moduleName.split(':')[0];
 			this.modules[moduleName] = module;
 			app.Events.trigger('Modules:Defined', module);
 			return this;
