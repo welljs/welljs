@@ -54,7 +54,7 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			activate: function (viewName) {
-			  this.active[viewName] = new (this.get(viewName))
+			  this.active[viewName] = new (this.get(viewName).implementation)
 			},
 
 			isActivated: function (viewName) {

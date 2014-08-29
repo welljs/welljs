@@ -2,7 +2,7 @@
 	var app;
 
 	//------- Module API
-	var Module = function (name, fn) {
+	var Module = function (name, fn, next) {
 		this.name = name;
 		this.deps = [];
 		this.config = {};
@@ -13,6 +13,7 @@
 			console.log('error in module: ' + name);
 		}
 		this.setType(name.split(':')[0]);
+		this.deps.length ? this.loadDeps(next) : next(this);
 	};
 	_.extend(Module.prototype, {
 		use: function (module) {
@@ -35,6 +36,16 @@
 			}
 			this.config['type'] = type;
 			return this;
+		},
+
+		loadDeps: function (next) {
+			app.Modules.require(this.deps, function () {
+				next(this);
+			}, function (err) {
+				console.log('Error in deps requiring...');
+				console.log(err);
+			});
+			return this;
 		}
 	});
 
@@ -51,9 +62,11 @@
 		},
 
 		define: function (moduleName, fn) {
-			var  module = new Module(moduleName, fn);
-			this.modules[moduleName] = module;
-			app.Events.trigger('Modules:Defined', module);
+			var controller = this;
+			new Module(moduleName, fn, function (module) {
+				controller.modules[moduleName] = module;
+				app.Events.trigger('Modules:Defined', module);
+			}.bind(this));
 			return this;
 		},
 
@@ -62,6 +75,7 @@
 			return this;
 		},
 
+		//поиск по атрибутам которые указаны в this.configure(). например по шаблону или по пути
 		findBy: function (criteria, value) {
 			return _.find(this.modules, function (module) {
 				return module.config[criteria] === value;
@@ -70,10 +84,29 @@
 
 		//requirejs wrapper
 		require: function (modules, cbk, err) {
-			for (var i = 0; i < modules.length; i++) {
-				modules[i] = app.transformToPath(modules[i]);
+			var missing = this.findMissing(modules);
+			for (var i = 0; i < missing.length; i++) {
+				missing[i] = app.transformToPath(missing[i]);
 			}
-			require(modules, cbk, err);
+
+			//создать очередь
+
+			//requirejs call
+			require(missing, function () {
+				//если есть зависимости, надо дождаться их
+			}, err);
+		},
+
+		exist: function (moduleName) {
+			return _.find(this.modules, function (module) {
+				return module.name === moduleName;
+			}, this);
+		},
+
+		findMissing: function (list) {
+			return _.filter(list, function (moduleName) {
+				!this.exist(moduleName);
+			});
 		}
 	});
 	window.BenderModuleController = Controller;
