@@ -48,12 +48,38 @@
 			return this;
 		}
 	});
+	// ------------- end of Module
 
+	//---------- Queue API
+	var Queue = function (modules, cbk, err) {
+		this.modules = modules;
+		app.Events.on('Modules:Defined', this.onModuleDefined, this);
+	};
+	_.extend(Queue.prototype, {
+		onModuleDefined: function (module) {
+			if (this.exist(module)) {
+				debugger;
+
+			}
+		},
+
+		exist: function (moduleName) {
+			return _.find(this.modules, function (module) {
+				return module === moduleName;
+			});
+		},
+
+		terminate: function () {
+
+		}
+	});
+	// --------- end of Queue
 
 	//--------- Controller API
 	var Controller = function(mainApp){
 		app = mainApp;
 		this.modules = {};
+		this.queue = {};
 		this.init();
 	};
 	_.extend(Controller.prototype, {
@@ -83,17 +109,19 @@
 		},
 
 		//requirejs wrapper
-		require: function (modules, cbk, err) {
+		require: function (modules, next, err) {
 			var missing = this.findMissing(modules);
 			for (var i = 0; i < missing.length; i++) {
 				missing[i] = app.transformToPath(missing[i]);
 			}
+			//если модули уже загружены - вызов
+			if (!missing.length) next();
 
-			//создать очередь
+			var queue = new Queue(missing);
 
-			//requirejs call
+				//requirejs call
 			require(missing, function () {
-				//если есть зависимости, надо дождаться их
+				queue.terminate();
 			}, err);
 		},
 
@@ -105,7 +133,7 @@
 
 		findMissing: function (list) {
 			return _.filter(list, function (moduleName) {
-				!this.exist(moduleName);
+				!this.exist(moduleName) && !this.inQueue(moduleName);
 			});
 		}
 	});
