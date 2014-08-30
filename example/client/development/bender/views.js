@@ -10,6 +10,10 @@ benderDefine('Bender:Views', function (app) {
 			//view modules
 			modules: {},
 			get: function (viewName) {
+				return this.modules[viewName].implementation;
+			},
+
+			getModule: function () {
 				return this.modules[viewName];
 			},
 
@@ -36,7 +40,7 @@ benderDefine('Bender:Views', function (app) {
 					app.Modules.require([action.module], function () {
 						controller.tryToRender(action, params);
 						controller	.hideOverlay();
-					}, this);
+					}, function(){});
 				}
 			},
 
@@ -54,7 +58,7 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			activate: function (viewName) {
-			  this.active[viewName] = new (this.get(viewName).implementation)
+			  this.active[viewName] = new (this.get(viewName))
 			},
 
 			isActivated: function (viewName) {

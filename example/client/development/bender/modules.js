@@ -39,8 +39,9 @@
 		},
 
 		loadDeps: function (next) {
+			var module = this;
 			app.Modules.require(this.deps, function () {
-				next(this);
+				next(module);
 			}, function (err) {
 				console.log('Error in deps requiring...');
 				console.log(err);
@@ -51,26 +52,31 @@
 	// ------------- end of Module
 
 	//---------- Queue API
-	var Queue = function (modules, cbk, err) {
+	var Queue = function (modules, next) {
 		this.modules = modules;
+		this.next = next;
 		app.Events.on('Modules:Defined', this.onModuleDefined, this);
 	};
 	_.extend(Queue.prototype, {
 		onModuleDefined: function (module) {
-			if (this.exist(module)) {
-				debugger;
+			//если модуль из этой очереди
+			if (this.exist(module.name))
+				this.modules.splice(this.modules.indexOf(module.name), 1);
 
+
+			//все модули загружены
+			if (!this.modules.length){
+				app.Events.off('Modules:Defined', this.onModuleDefined, this);
+				this.next();
 			}
+
+			return this;
 		},
 
 		exist: function (moduleName) {
 			return _.find(this.modules, function (module) {
 				return module === moduleName;
 			});
-		},
-
-		terminate: function () {
-
 		}
 	});
 	// --------- end of Queue
@@ -111,18 +117,17 @@
 		//requirejs wrapper
 		require: function (modules, next, err) {
 			var missing = this.findMissing(modules);
+
+			new Queue(_.clone(missing), next);
+
 			for (var i = 0; i < missing.length; i++) {
 				missing[i] = app.transformToPath(missing[i]);
 			}
 			//если модули уже загружены - вызов
 			if (!missing.length) next();
 
-			var queue = new Queue(missing);
-
-				//requirejs call
-			require(missing, function () {
-				queue.terminate();
-			}, err);
+			//requirejs call
+			require(missing, function(){}, err);
 		},
 
 		exist: function (moduleName) {
@@ -133,8 +138,8 @@
 
 		findMissing: function (list) {
 			return _.filter(list, function (moduleName) {
-				!this.exist(moduleName) && !this.inQueue(moduleName);
-			});
+				return !this.exist(moduleName);
+			}, this);
 		}
 	});
 	window.BenderModuleController = Controller;
