@@ -39,10 +39,9 @@
 		},
 
 		loadDeps: function (next) {
-			var module = this;
 			app.Modules.require(this.deps, function () {
-				next(module);
-			}, function (err) {
+				next(this);
+			}.bind(this), function (err) {
 				console.log('Error in deps requiring...');
 				console.log(err);
 			});
