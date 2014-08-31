@@ -117,12 +117,12 @@
 		//requirejs wrapper
 		require: function (modules, next, err) {
 			var missing = this.findMissing(modules);
+			//если модули уже загружены - вызов
+			if (!missing.length) return next();
 			new Queue(_.clone(missing), next);
 			missing = _.map(missing, function (moduleName) {
 				return app.transformToPath(moduleName);
 			}, this);
-			//если модули уже загружены - вызов
-			if (!missing.length) return next();
 			//requirejs call
 			require(missing, function(){}, err);
 			return this;
