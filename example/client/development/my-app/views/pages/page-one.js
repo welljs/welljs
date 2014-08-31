@@ -7,8 +7,8 @@ benderDefine('Views:Pages:PageOne', function (app) {
 	});
 	return function () {
 	  return app.Views.get('Views:Common:Base').extend({
-			initialize: function () {
-				this.render();
+			initialize: function (options) {
+				this.template = options.template;
 			},
 			render: function () {
 				this.$el.html(this.template.render());

@@ -2,7 +2,7 @@ benderDefine('Bender:Views', function (app) {
 	return function(){
 		var Controller = function () {
 			app.Events.on('Router:PageChanged', this.tryToRender, this);
-			app.Events.on('Modules:Defined', this.onModuleDefined, this);
+			app.Events.on('Module:Defined', this.onModuleDefined, this);
 		};
 		_.extend(Controller.prototype, {
 			//initialized views
@@ -10,20 +10,28 @@ benderDefine('Bender:Views', function (app) {
 			//view modules
 			modules: {},
 			get: function (viewName) {
-				return this.modules[viewName].implementation;
+				return this.modules[viewName].implementation();
 			},
 
-			getModule: function () {
+			getModule: function (viewName) {
 				return this.modules[viewName];
 			},
 
-			set: function (viewName, impl) {
-				this.modules[viewName] = impl;
+			set: function (module) {
+				this.modules[module.name] = module;
+			},
+
+			getTemplate: function (module) {
+				var mod = (typeof module === 'string') ? this.getModule(module) : module;
+
+				return (mod.config && mod.config.template)
+					? app.Templates.get(mod.config.template)
+					: {};
 			},
 
 			onModuleDefined: function (module) {
 				if (module.isView) {
-					this.modules[module.name] = module;
+					this.set(module);
 				}
 			},
 
@@ -58,7 +66,10 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			activate: function (viewName) {
-			  this.active[viewName] = new (this.get(viewName))
+				var template = this.getTemplate(viewName);
+				return this.active[viewName] = new (this.get(viewName))({
+					template: template
+				});
 			},
 
 			isActivated: function (viewName) {

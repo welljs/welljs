@@ -1,5 +1,4 @@
 benderDefine('Views:Pages:Home', function (app) {
-//	debugger;
 	this.use('Views:Common:Base');
 	this.configure({
 		layout: 'Main',
@@ -8,8 +7,8 @@ benderDefine('Views:Pages:Home', function (app) {
 	});
 	return function () {
 	  return app.Views.get('Views:Common:Base').extend({
-			initialize: function () {
-				this.render();
+			initialize: function (options) {
+				this.template = options.template;
 			},
 			render: function () {
 				this.$el.html(this.template.render());

@@ -54,18 +54,19 @@
 	var Queue = function (modules, next) {
 		this.modules = modules;
 		this.next = next;
-		app.Events.on('Modules:Defined', this.onModuleDefined, this);
+		app.Events.on('Module:Defined', this.onModuleDefined, this);
 	};
 	_.extend(Queue.prototype, {
 		onModuleDefined: function (module) {
-			//если модуль из этой очереди
+			//если модуль из этой очереди, то удалить его из очереди
 			if (this.exist(module.name))
 				this.modules.splice(this.modules.indexOf(module.name), 1);
 
 
-			//все модули загружены
+			//когда все модули загружены
 			if (!this.modules.length){
-				app.Events.off('Modules:Defined', this.onModuleDefined, this);
+				app.Events.off('Module:Defined', this.onModuleDefined, this);
+				//колбэк самого первого уровня вложенности (относительно очереди)
 				this.next();
 			}
 
@@ -96,7 +97,7 @@
 			var controller = this;
 			new Module(moduleName, fn, function (module) {
 				controller.modules[moduleName] = module;
-				app.Events.trigger('Modules:Defined', module);
+				app.Events.trigger('Module:Defined', module);
 			}.bind(this));
 			return this;
 		},
