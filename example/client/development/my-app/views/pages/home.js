@@ -1,5 +1,6 @@
 benderDefine('Views:Pages:Home', function (app) {
 	this.use('Views:Common:Base');
+	this.use('Views:Layouts:Main');
 	this.configure({
 		layout: 'Main',
 		template: 'Pages:Home',

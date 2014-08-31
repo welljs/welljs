@@ -18,5 +18,9 @@ benderDefine('Bender:Strategy', function (app) {
 				console.log('after router start');
 			}
 		});
+
+		app.Views.configure({
+			layoutHolder: 'body'
+		});
 	}
 });

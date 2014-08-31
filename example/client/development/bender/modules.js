@@ -1,6 +1,6 @@
 (function () {
+	'use strict';
 	var app;
-
 	//------- Module API
 	var Module = function (name, fn, next) {
 		this.name = name;
@@ -117,17 +117,15 @@
 		//requirejs wrapper
 		require: function (modules, next, err) {
 			var missing = this.findMissing(modules);
-
 			new Queue(_.clone(missing), next);
-
-			for (var i = 0; i < missing.length; i++) {
-				missing[i] = app.transformToPath(missing[i]);
-			}
+			missing = _.map(missing, function (moduleName) {
+				return app.transformToPath(moduleName);
+			}, this);
 			//если модули уже загружены - вызов
-			if (!missing.length) next();
-
+			if (!missing.length) return next();
 			//requirejs call
 			require(missing, function(){}, err);
+			return this;
 		},
 
 		exist: function (moduleName) {

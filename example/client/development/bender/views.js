@@ -9,6 +9,12 @@ benderDefine('Bender:Views', function (app) {
 			active: {},
 			//view modules
 			modules: {},
+
+			config: {},
+
+			configure: function (options) {
+				this.config = options;
+			},
 			get: function (viewName) {
 				return this.modules[viewName].implementation();
 			},
