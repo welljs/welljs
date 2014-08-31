@@ -1,7 +1,7 @@
 benderDefine('Views:Layouts:Main', function (app) {
 	this.use('Views:Common:Base');
 	this.configure({
-		template: 'Views:Layouts:Main'
+		template: 'Layouts:Main'
 	});
 	return function () {
 		return app.Views.get('Views:Common:Base').extend({

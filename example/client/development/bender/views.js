@@ -9,12 +9,13 @@ benderDefine('Bender:Views', function (app) {
 			active: {},
 			//view modules
 			modules: {},
-
 			config: {},
-
+			currentLayout: null,
+			currentPage: null,
 			configure: function (options) {
 				this.config = options;
 			},
+
 			get: function (viewName) {
 				return this.modules[viewName].implementation();
 			},
@@ -25,11 +26,11 @@ benderDefine('Bender:Views', function (app) {
 
 			set: function (module) {
 				this.modules[module.name] = module;
+				return this;
 			},
 
 			getTemplate: function (module) {
 				var mod = (typeof module === 'string') ? this.getModule(module) : module;
-
 				return (mod.config && mod.config.template)
 					? app.Templates.get(mod.config.template)
 					: {};
@@ -39,31 +40,37 @@ benderDefine('Bender:Views', function (app) {
 				if (module.isView) {
 					this.set(module);
 				}
+				return this;
 			},
 
 			tryToRender: function (action, params) {
-				var mod = app.Modules.findBy('route', action.route),
-					controller = this;
+				var module = app.Modules.findBy('route', action.route);
 				//if module exist
-				if (mod) {
+				if (module) {
 					this.render(action.module, params);
+					this.hideOverlay();
 				}
 				//else download module, and try again
 				else{
 					this.showOverlay();
 					app.Modules.require([action.module], function () {
-						controller.tryToRender(action, params);
-						controller	.hideOverlay();
-					}, function(){});
+						this.tryToRender(action, params);
+					}.bind(this), function(){});
 				}
+				return this;
 			},
 
 			render: function (viewName, params) {
-				var view = (!this.isActivated(viewName))
-					? this.activate(viewName)
+				var layout;
+				var view = (!this.isInitialized(viewName))
+					? this.initialize(viewName)
 					: this.getActive(viewName);
 
-				_.isFunction(view.render) && view.render(params);
+				if (_.isFunction(view.render)) {
+					view.render(params);
+					this.currentPage = viewName;
+					this.currentLayout = layout;
+				}
 				return this;
 			},
 
@@ -71,14 +78,16 @@ benderDefine('Bender:Views', function (app) {
 			  return this.active[viewName];
 			},
 
-			activate: function (viewName) {
+			initialize: function (viewName) {
 				var template = this.getTemplate(viewName);
-				return this.active[viewName] = new (this.get(viewName))({
+				var view = this.active[viewName] = new (this.get(viewName))({
 					template: template
 				});
+				view.template = template;
+				return view;
 			},
 
-			isActivated: function (viewName) {
+			isInitialized: function (viewName) {
 				return this.active[viewName];
 			},
 
