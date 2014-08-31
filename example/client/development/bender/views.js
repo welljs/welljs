@@ -37,9 +37,7 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			onModuleDefined: function (module) {
-				if (module.isView) {
-					this.set(module);
-				}
+				module.isView && this.set(module);
 				return this;
 			},
 
