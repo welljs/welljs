@@ -47,7 +47,7 @@ benderDefine('Bender:Views', function (app) {
 				var module = app.Modules.findBy('route', action.route);
 				//if module exist
 				if (module) {
-					this.render(action.module, params);
+					this.render(module.name, params);
 					this.hideOverlay();
 				}
 				//else download module, and try again
@@ -75,7 +75,7 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			getInitialized: function (viewName) {
-			  return this.initialized[viewName];
+				return this.initialized[viewName];
 			},
 
 			initialize: function (viewName) {
@@ -88,7 +88,7 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			isInitialized: function (viewName) {
-				return this.initialized[viewName];
+				return !!this.initialized[viewName];
 			},
 
 			showOverlay: function () {
