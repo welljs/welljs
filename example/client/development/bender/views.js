@@ -6,7 +6,7 @@ benderDefine('Bender:Views', function (app) {
 		};
 		_.extend(Controller.prototype, {
 			//initialized views
-			active: {},
+			initialized: {},
 			//view modules
 			modules: {},
 			config: {},
@@ -64,7 +64,7 @@ benderDefine('Bender:Views', function (app) {
 				var layout;
 				var view = (!this.isInitialized(viewName))
 					? this.initialize(viewName)
-					: this.getActive(viewName);
+					: this.getInitialized(viewName);
 
 				if (_.isFunction(view.render)) {
 					view.render(params);
@@ -74,13 +74,13 @@ benderDefine('Bender:Views', function (app) {
 				return this;
 			},
 
-			getActive: function (viewName) {
-			  return this.active[viewName];
+			getInitialized: function (viewName) {
+			  return this.initialized[viewName];
 			},
 
 			initialize: function (viewName) {
 				var template = this.getTemplate(viewName);
-				var view = this.active[viewName] = new (this.get(viewName))({
+				var view = this.initialized[viewName] = new (this.get(viewName))({
 					template: template
 				});
 				view.template = template;
@@ -88,7 +88,7 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			isInitialized: function (viewName) {
-				return this.active[viewName];
+				return this.initialized[viewName];
 			},
 
 			showOverlay: function () {
