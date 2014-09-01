@@ -59,10 +59,13 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			render: function (viewName, params) {
+				//отрендерить лэйуат, если он изменился
+
+				//отрендерить страницу
 				var layout;
-				var view = (!this.isInitialized(viewName))
-					? this.initialize(viewName)
-					: this.getInitialized(viewName);
+				var view = (this.isInitialized(viewName))
+					? this.getInitialized(viewName)
+					: this.initialize(viewName);
 
 				if (_.isFunction(view.render)) {
 					view.render(params);
