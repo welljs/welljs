@@ -22,8 +22,12 @@
 		},
 
 		configure: function (options) {
-			this.config = options;
+			this.config = options || {};
 			return this;
+		},
+
+		getConfigParam: function (prop) {
+			return this.config[prop];
 		},
 
 		setType: function (type) {
@@ -54,7 +58,7 @@
 	var Queue = function (modules, next) {
 		this.modules = modules;
 		this.next = next;
-		app.Events.on('Module:Defined', this.onModuleDefined, this);
+		app.Events.on('MODULE_DEFINED', this.onModuleDefined, this);
 	};
 	_.extend(Queue.prototype, {
 		onModuleDefined: function (module) {
@@ -65,7 +69,7 @@
 
 			//когда все модули загружены
 			if (!this.modules.length){
-				app.Events.off('Module:Defined', this.onModuleDefined, this);
+				app.Events.off('MODULE_DEFINED', this.onModuleDefined, this);
 				//колбэк самого первого уровня вложенности (относительно очереди)
 				this.next();
 			}
@@ -97,7 +101,7 @@
 			var controller = this;
 			new Module(moduleName, fn, function (module) {
 				controller.modules[moduleName] = module;
-				app.Events.trigger('Module:Defined', module);
+				app.Events.trigger('MODULE_DEFINED', module);
 			}.bind(this));
 			return this;
 		},

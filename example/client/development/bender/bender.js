@@ -1,6 +1,7 @@
 (function () {
 	'use strict';
 	var App = function (opts) {
+		this.isProduction = (ENV && ENV === 'production');
 		this.Events = _.extend(Backbone.Events, {});
 		this.options = opts;
 		!opts.router && (this.options.router = 'Bender:Router');
@@ -43,9 +44,9 @@
 		onCoreLoaded: function () {
 			var Modules = this.Modules;
 			this.Models = new (Modules.get('Bender:Models'));
-			this.Views = new (Modules.get('Bender:Views'));
-			this.Templates = new (Modules.get('Bender:Templates'));
 			this.Router = new(Modules.get('Bender:Router'));
+			this.Templates = new (Modules.get('Bender:Templates'));
+			this.Views = new (Modules.get('Bender:Views'));
 			this.Strategy = new(Modules.get(this.options.strategy));
 			return this;
 		},

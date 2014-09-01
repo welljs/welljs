@@ -1,13 +1,10 @@
-benderDefine('Views:Pages:PageOne', function (app) {
+benderDefine('Views:Parts:Sidebar', function (app) {
 	this.use('Views:Common:Base');
-	this.use('Views:Layouts:Main');
 	this.configure({
-		layout: 'Views:Layouts:Main',
-		template: 'Pages:PageOne',
-		route: '/page-one'
+		template: 'Parts:Sidebar'
 	});
 	return function () {
-	  return app.Views.get('Views:Common:Base').extend({
+		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
 				this.template = options.template;
 			},

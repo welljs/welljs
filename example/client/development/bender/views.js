@@ -1,8 +1,8 @@
 benderDefine('Bender:Views', function (app) {
 	return function(){
 		var Controller = function () {
-			app.Events.on('Router:PageChanged', this.tryToRender, this);
-			app.Events.on('Module:Defined', this.onModuleDefined, this);
+			app.Events.on('ROUTER_PAGE_CHANGED', this.tryToRender, this);
+			app.Events.on('MODULE_DEFINED', this.onModuleDefined, this);
 		};
 		_.extend(Controller.prototype, {
 			//initialized views
@@ -29,11 +29,11 @@ benderDefine('Bender:Views', function (app) {
 				return this;
 			},
 
-			getTemplate: function (module) {
+			getTemplate: function (module, next) {
 				var mod = (typeof module === 'string') ? this.getModule(module) : module;
-				return (mod.config && mod.config.template)
-					? app.Templates.get(mod.config.template)
-					: {};
+				if (!mod) return false;
+				var name = mod.getConfigParam('template');
+				return app.Templates.get(name) || name;
 			},
 
 			onModuleDefined: function (module) {
@@ -41,36 +41,75 @@ benderDefine('Bender:Views', function (app) {
 				return this;
 			},
 
-			tryToRender: function (action, params) {
-				var module = app.Modules.findBy('route', action.route);
-				//if module exist
-				if (module) {
-					this.render(module.name, params);
-					this.hideOverlay();
+			getLayout: function (module) {
+				return this.getModule(module.getConfigParam('layout'));
+			},
+
+			isCurrentLayout: function (viewName) {
+				return !!(this.currentLayout && this.currentLayout.name === viewName);
+			},
+
+			load: function (name, next) {
+				var controller = this;
+				var module = this.getModule(name);
+				if (!module) {
+					app.Modules.require([name], function () {
+						controller.loadTemplate(controller.getTemplate(name), next);
+					});
 				}
-				//else download module, and try again
-				else{
-					this.showOverlay();
-					app.Modules.require([action.module], function () {
-						this.tryToRender(action, params);
-					}.bind(this), function(){});
+				else {
+					controller.loadTemplate(controller.getTemplate(name), next);
 				}
 				return this;
 			},
 
-			render: function (viewName, params) {
-				//отрендерить лэйуат, если он изменился
+			loadTemplate: function (name, next) {
+				var controller = this;
+				app.Templates.load(app.transformToPath(name), function () {
+					next.call(controller);
+				}, function (err) {
+					console.log(err);
+				});
+			},
 
-				//отрендерить страницу
-				var layout;
+			isReady: function (module) {
+				if (!module) return false;
+				return !!module && $.isPlainObject(this.getTemplate(module));
+			},
+
+			tryToRender: function (action, params) {
+				var page = app.Modules.findBy('route', action.route);
+
+				if (!this.isReady(page)) {
+					return this.load(action.module, function () {
+						this.tryToRender(action, params);
+					});
+				}
+
+				var layout = this.getLayout(page);
+				if (!this.isReady(layout)) {
+					return this.load(layout.name, function () {
+						this.tryToRender(action, params);
+					});
+				}
+
+				if(!this.isCurrentLayout(layout.name)) {
+					this.currentLayout = layout;
+					this.render(layout.name, params);
+				}
+				this.currentPage = page;
+				this.render(page.name, params);
+				this.hideOverlay();
+				return this;
+			},
+
+			render: function (viewName, params) {
 				var view = (this.isInitialized(viewName))
 					? this.getInitialized(viewName)
 					: this.initialize(viewName);
 
 				if (_.isFunction(view.render)) {
 					view.render(params);
-					this.currentPage = viewName;
-					this.currentLayout = layout;
 				}
 				return this;
 			},

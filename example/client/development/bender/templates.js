@@ -1,6 +1,5 @@
 benderDefine('Bender:Templates', function (app) {
 	return function () {
-
 		//template api
 		function create (opts) {
 			return {
@@ -14,19 +13,56 @@ benderDefine('Bender:Templates', function (app) {
 		// constructor
 		var Controller = function () {
 			this.storage = {};
-			this
-				._process()
-				._registerHelpers();
+			this.config = {};
+			this._start();
 		};
 
 		//controllers api
 		_.extend(Controller.prototype, {
+			configure: function (opts) {
+				this.config = opts;
+				return this;
+			},
+
+			_start: function () {
+				this.config.precompiled && this._processCompiled();
+				this._registerHelpers();
+				return this;
+			},
 
 			get: function (name) {
 				return this.storage[name];
 			},
 
-			_process: function () {
+			exist: function (name) {
+				return this.storage[name];
+			},
+
+			//from html
+			load: function (path, next, err) {
+				var name = app.transformToName(path);
+				if (this.exist(name))
+					return next(this.get(name));
+				$.ajax({
+					url: this.config.html + path +'.html',
+					dataType: 'html',
+					context: this,
+					success: function (html) {
+						var template = create({
+							path: path,
+							renderer: Handlebars.compile(html)
+						});
+						this.storage[name] = template;
+						_.isFunction(next) && next(template);
+					},
+					error: function (res) {
+						_.isFunction(err) && err(res);
+					}
+				});
+			},
+
+			//from precompiled
+			_processCompiled: function () {
 				var templates = Handlebars.templates;
 				for(var path in templates) {
 					if (!templates.hasOwnProperty(path)) continue;
@@ -39,11 +75,10 @@ benderDefine('Bender:Templates', function (app) {
 			},
 
 			_registerHelpers: function () {
-
 				Handlebars.registerHelper('partial', function (name) {
-					debugger;
+					if (!app.Views.isInitialized(name))
+						app.Views.initialize(name);
 				});
-
 				return this;
 			}
 		});

@@ -23,7 +23,7 @@ benderDefine('Bender:Router', function (app) {
 		proxy: function () {
 			var args = this.parseUrl(Backbone.history.fragment);
 			this.currentPage = args.route === '/' ? '' : args.route;
-			app.Events.trigger('Router:PageChanged', this.getRouteAction(args.route), args.params);
+			app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(args.route), args.params);
 		},
 
 		go: function (url) {

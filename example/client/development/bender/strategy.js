@@ -5,22 +5,18 @@ benderDefine('Bender:Strategy', function (app) {
 				'/': 'Views:Pages:Home',
 				'page-one': 'Views:Pages:PageOne'
 			},
-
 			routes: [
 				/^[A-Za-z0-9\/_-]{0,24}$/
-			],
-
-			beforeStart: function () {
-				console.log('before router start');
-			},
-
-			afterStart: function () {
-				console.log('after router start');
-			}
+			]
 		});
 
 		app.Views.configure({
 			layoutHolder: 'body'
+		});
+
+		app.Templates.configure({
+//			precompiled: true,
+			html: '/my-app/views/templates/html/'
 		});
 	}
 });
