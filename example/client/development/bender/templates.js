@@ -76,8 +76,10 @@ benderDefine('Bender:Templates', function (app) {
 
 			_registerHelpers: function () {
 				Handlebars.registerHelper('partial', function (name) {
-					if (!app.Views.isInitialized(name))
-						app.Views.initialize(name);
+					var view = (!app.Views.isInitialized(name))
+						? app.Views.initialize(name)
+						: app.Views.getInitialized(name);
+					return view ? view.$el.html() : '';
 				});
 				return this;
 			}

@@ -7,11 +7,13 @@ benderDefine('Views:Layouts:Main', function (app) {
 	return function () {
 		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
-//				this.sidebar = new (app.Views.get('Views:Parts:Sidebar'));
+				this.sidebar = app.Views.initialize('Views:Parts:Sidebar');
+				Handlebars.registerPartial('sidebar', this.sidebar.$el);
+				this.sidebar.render();
 				this.template = options.template;
 			},
 			render: function () {
-				this.$el.html(this.template.render());
+				this.$el.html(this.template.render({page: app.Views.currentPage.name}));
 				this.pageContainer = this.$('.page-content');
 				return this;
 			}

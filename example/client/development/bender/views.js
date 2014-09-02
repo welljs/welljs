@@ -29,7 +29,7 @@ benderDefine('Bender:Views', function (app) {
 				return this;
 			},
 
-			getTemplate: function (module, next) {
+			getTemplate: function (module) {
 				var mod = (typeof module === 'string') ? this.getModule(module) : module;
 				if (!mod) return false;
 				var name = mod.getConfigParam('template');
@@ -38,27 +38,11 @@ benderDefine('Bender:Views', function (app) {
 
 			onModuleDefined: function (module) {
 				if (module.isView) {
-					this
-						.set(module)
-						.completeModule(module);
+					this.complete(module);
+					this.set(module);
 				}
 				return this;
 			},
-
-			completeModule: function (module) {
-			  var template = this.getTemplate(module);
-				if (_.isObject(template))
-					return module.complete();
-
-				if (_.isString(template))
-					this.loadTemplate(template, function () {
-						app.Events.trigger('MODULE_COMPLETED', module);
-					});
-
-				return this;
-			},
-
-
 
 			getLayout: function (module) {
 				return this.getModule(module.getConfigParam('layout'));
@@ -68,18 +52,41 @@ benderDefine('Bender:Views', function (app) {
 				return !!(this.currentLayout && this.currentLayout.name === viewName);
 			},
 
-			load: function (name, next) {
-				var controller = this;
-				var module = this.getModule(name);
-				if (!module) {
-					app.Modules.require([name], function () {
-						controller.loadTemplate(controller.getTemplate(name), next);
-					});
+
+			//загружает модуль вьюхи со всеми зависимостями. шаблоном в т.ч.
+			complete: function (module, cbk) {
+				var next = _.isFunction(cbk) ? cbk : function () {};
+				function getTemplate (module, next) {
+					var template = this.getTemplate(module);
+					//если шаблон строка, значит он еще не загружен. подгружается и запускается колбэк
+					_.isString(template)
+						? this.loadTemplate(template, function () {
+								next.call(this);
+							})
+						:	next.call(this);
 				}
-				else {
-					controller.loadTemplate(controller.getTemplate(name), next);
+
+				function onCompleted () {
+					module.isCompleted = true;
+					delete module.inProgress;
+					next.call(self)
 				}
-				return this;
+
+				module.inProgress = true;
+				var self = this;
+
+				// если вьюха уже загружена, то подгружается только шаблон
+				// если шаблон тоже подгружен, то сразу сработает колбэк
+				if (_.isObject(module))
+					return getTemplate.call(this, module, onCompleted);
+
+				// загружается модуль вьюхи, после этого шаблон, после этого вызов колбэка.
+				// если шаблон уже есть, то сразу колбэк
+				return app.Modules.require([module], function () {
+					//к этому моменту заргужен модуль и все его зависимости
+					module = self.getModule(module);
+					getTemplate.call(self, module, onCompleted);
+				});
 			},
 
 			loadTemplate: function (name, next) {
@@ -91,47 +98,31 @@ benderDefine('Bender:Views', function (app) {
 				});
 			},
 
-			isReady: function (module) {
-				if (!module) return false;
-				return !!module && $.isPlainObject(this.getTemplate(module));
-			},
-
 			tryToRender: function (action, params) {
 				var page = app.Modules.findBy('route', action.route),
 					controller = this;
 
-				if (!page.isCompleted) {
-					return page.onComplete(function () {
+				//если страница еще не скачана - скачать
+				if (!page || !page.isCompleted) {
+					return this.complete(action.module, function () {
 						controller.tryToRender(action, params);
 					});
 				}
 
 				var layout = this.getLayout(page) || {};
-				if (!layout.isCompleted) {
-					return layout.onComplete(function () {
+				if (!layout || !layout.isCompleted) {
+					return this.complete(layout, function () {
 						controller.tryToRender(action, params);
 					});
 				}
 
-
-//				if (!this.isReady(page)) {
-//					return this.load(action.module, function () {
-//						this.tryToRender(action, params);
-//					});
-//				}
-
-//				var layout = this.getLayout(page);
-//				if (!this.isReady(layout)) {
-//					return this.load(layout.name, function () {
-//						this.tryToRender(action, params);
-//					});
-//				}
-
+				this.currentPage = page;
 				if(!this.isCurrentLayout(layout.name)) {
 					this.currentLayout = layout;
+					if (!layout.el)
+						layout.el = $(this.config.layoutHolder);
 					this.render(layout.name, params);
 				}
-				this.currentPage = page;
 				this.render(page.name, params);
 				this.hideOverlay();
 				return this;
@@ -154,8 +145,10 @@ benderDefine('Bender:Views', function (app) {
 
 			initialize: function (viewName) {
 				var template = this.getTemplate(viewName);
+				var module = this.getModule(viewName);
 				var view = this.initialized[viewName] = new (this.get(viewName))({
-					template: template
+					template: template,
+					el: module.el
 				});
 				view.template = template;
 				return view;
