@@ -37,9 +37,28 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			onModuleDefined: function (module) {
-				module.isView && this.set(module);
+				if (module.isView) {
+					this
+						.set(module)
+						.completeModule(module);
+				}
 				return this;
 			},
+
+			completeModule: function (module) {
+			  var template = this.getTemplate(module);
+				if (_.isObject(template))
+					return module.complete();
+
+				if (_.isString(template))
+					this.loadTemplate(template, function () {
+						app.Events.trigger('MODULE_COMPLETED', module);
+					});
+
+				return this;
+			},
+
+
 
 			getLayout: function (module) {
 				return this.getModule(module.getConfigParam('layout'));
@@ -78,20 +97,35 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			tryToRender: function (action, params) {
-				var page = app.Modules.findBy('route', action.route);
+				var page = app.Modules.findBy('route', action.route),
+					controller = this;
 
-				if (!this.isReady(page)) {
-					return this.load(action.module, function () {
-						this.tryToRender(action, params);
+				if (!page.isCompleted) {
+					return page.onComplete(function () {
+						controller.tryToRender(action, params);
 					});
 				}
 
-				var layout = this.getLayout(page);
-				if (!this.isReady(layout)) {
-					return this.load(layout.name, function () {
-						this.tryToRender(action, params);
+				var layout = this.getLayout(page) || {};
+				if (!layout.isCompleted) {
+					return layout.onComplete(function () {
+						controller.tryToRender(action, params);
 					});
 				}
+
+
+//				if (!this.isReady(page)) {
+//					return this.load(action.module, function () {
+//						this.tryToRender(action, params);
+//					});
+//				}
+
+//				var layout = this.getLayout(page);
+//				if (!this.isReady(layout)) {
+//					return this.load(layout.name, function () {
+//						this.tryToRender(action, params);
+//					});
+//				}
 
 				if(!this.isCurrentLayout(layout.name)) {
 					this.currentLayout = layout;

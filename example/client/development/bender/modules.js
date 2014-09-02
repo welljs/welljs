@@ -6,6 +6,7 @@
 		this.name = name;
 		this.deps = [];
 		this.config = {};
+		this.onCompleteFns = [];
 		try {
 			this.implementation = fn.call(this, app);
 		}
@@ -49,6 +50,21 @@
 				console.log('Error in deps requiring...');
 				console.log(err);
 			});
+			return this;
+		},
+
+		//функция, завершающая загрузку и обработку модуля, до стадии когда им можно полноценно пользоваться (completed)
+		complete: function (fn) {
+			this.isComplete = true;
+			fn.call(this);
+			_.each(this.onCompleteFns, function (fn) {
+				_.isFunction(fn) && fn.call(this);
+			}, this);
+			return this;
+		},
+
+		onComplete: function (fn) {
+			this.onCompleteFns.push(fn);
 			return this;
 		}
 	});
