@@ -38,6 +38,7 @@ benderDefine('Bender:Views', function (app) {
 
 			onModuleDefined: function (module) {
 				if (module.isView) {
+					/// есть шаблон или нет
 					this.complete(module);
 					this.set(module);
 				}
@@ -52,41 +53,13 @@ benderDefine('Bender:Views', function (app) {
 				return !!(this.currentLayout && this.currentLayout.name === viewName);
 			},
 
-
-			//загружает модуль вьюхи со всеми зависимостями. шаблоном в т.ч.
-			complete: function (module, cbk) {
-				var next = _.isFunction(cbk) ? cbk : function () {};
-				function getTemplate (module, next) {
-					var template = this.getTemplate(module);
-					//если шаблон строка, значит он еще не загружен. подгружается и запускается колбэк
-					_.isString(template)
-						? this.loadTemplate(template, function () {
-								next.call(this);
-							})
-						:	next.call(this);
+			complete: function (module) {
+				var template = this.getTemplate(module);
+				if (_.isString(template)) {
+					this.loadTemplate(template, function () {
+						app.Events.trigger('MODULE_COMPLETED', module);
+					})
 				}
-
-				function onCompleted () {
-					module.isCompleted = true;
-					delete module.inProgress;
-					next.call(self)
-				}
-
-				module.inProgress = true;
-				var self = this;
-
-				// если вьюха уже загружена, то подгружается только шаблон
-				// если шаблон тоже подгружен, то сразу сработает колбэк
-				if (_.isObject(module))
-					return getTemplate.call(this, module, onCompleted);
-
-				// загружается модуль вьюхи, после этого шаблон, после этого вызов колбэка.
-				// если шаблон уже есть, то сразу колбэк
-				return app.Modules.require([module], function () {
-					//к этому моменту заргужен модуль и все его зависимости
-					module = self.getModule(module);
-					getTemplate.call(self, module, onCompleted);
-				});
 			},
 
 			loadTemplate: function (name, next) {
@@ -99,8 +72,22 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			tryToRender: function (action, params) {
+				function Queue() {}
 				var page = app.Modules.findBy('route', action.route),
 					controller = this;
+				var self = this;
+
+				if (!page) {
+					///все модули из списка должны быть со статусом completed чтобы запустить колбэк
+					app.Events.on('MODULE_COMPLETED', function (module) {
+						console.log(module);
+					}, this);
+					return app.Modules.require([action.module], function () {
+						//тут модули загруже
+						app.Events.off('MODULE_COMPLETED');
+						self.tryToRender(action, params);
+					});
+				}
 
 				//если страница еще не скачана - скачать
 				if (!page || !page.isCompleted) {
