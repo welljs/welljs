@@ -1,7 +1,7 @@
 benderDefine('Views:Parts:Sidebar', function (app) {
 	this.use('Views:Common:Base');
 	this.configure({
-		template: 'Parts:Sidebar'
+//		template: 'Parts:Sidebar'
 	});
 	return function () {
 		return app.Views.get('Views:Common:Base').extend({
@@ -10,6 +10,9 @@ benderDefine('Views:Parts:Sidebar', function (app) {
 			},
 			render: function () {
 				this.$el.html(this.template.render());
+				this.$('button').on('click', function () {
+					console.log('ok');
+				});
 				return this;
 			}
 		});

@@ -81,7 +81,7 @@
 					}, this)
 				}, this);
 				//колбэк самого первого уровня вложенности (относительно очереди)
-				this.next(this.modules);
+				this.next(this.modules, this);
 			}
 			return this;
 		},

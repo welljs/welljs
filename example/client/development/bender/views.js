@@ -29,6 +29,12 @@ benderDefine('Bender:Views', function (app) {
 				return this;
 			},
 
+			getPartials: function (module) {
+				var mod = (typeof module === 'string') ? this.getModule(module) : module;
+				if (!mod) return false;
+				return mod.getConfigParam('partials') || [];
+			},
+
 			getTemplate: function (module) {
 				var mod = (typeof module === 'string') ? this.getModule(module) : module;
 				if (!mod) return false;
@@ -54,12 +60,14 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			complete: function (module) {
-				var template = this.getTemplate(module);
-				if (_.isString(template)) {
-					this.loadTemplate(template, function () {
-						app.Events.trigger('MODULE_COMPLETED', module);
-					})
-				}
+				var templates = _.union([this.getTemplate(module)], this.getPartials(module));
+				_.each(templates, function (template) {
+					if (_.isString(template)) {
+						this.loadTemplate(template, function () {
+							app.Events.trigger('MODULE_COMPLETED', module);
+						})
+					}
+				});
 			},
 
 			loadTemplate: function (name, next) {
@@ -71,38 +79,41 @@ benderDefine('Bender:Views', function (app) {
 				});
 			},
 
+			waitOnQueueComplete: function (modules, next) {
+				var missing = {};
+				app.Events.on('MODULE_COMPLETED', function (module) {
+					if (_.isEmpty(missing)) {
+						_.each(modules, function (mod) {
+							if (_.isString(this.getTemplate(mod)))
+								missing[mod.name] = _.clone(mod);
+						}, this);
+					}
+
+					if (!missing[module.name])
+						return;
+
+					delete missing[module.name];
+					if (_.isEmpty(missing)) {
+						app.Events.off('MODULE_COMPLETED');
+						return next.call(this)
+					}
+				}, this);
+
+			},
+
 			tryToRender: function (action, params) {
-				function Queue() {}
-				var page = app.Modules.findBy('route', action.route),
-					controller = this;
+				var page = app.Modules.findBy('route', action.route);
 				var self = this;
 
 				if (!page) {
-					///все модули из списка должны быть со статусом completed чтобы запустить колбэк
-					app.Events.on('MODULE_COMPLETED', function (module) {
-						console.log(module);
-					}, this);
 					return app.Modules.require([action.module], function (modules, queue) {
-						//тут модули загруже
-						app.Events.off('MODULE_COMPLETED');
-						self.tryToRender(action, params);
+						self.waitOnQueueComplete(modules, function () {
+							self.tryToRender(action, params);
+						});
 					});
 				}
 
-				//если страница еще не скачана - скачать
-				if (!page || !page.isCompleted) {
-					return this.complete(action.module, function () {
-						controller.tryToRender(action, params);
-					});
-				}
-
-				var layout = this.getLayout(page) || {};
-				if (!layout || !layout.isCompleted) {
-					return this.complete(layout, function () {
-						controller.tryToRender(action, params);
-					});
-				}
-
+				var layout = this.getLayout(page);
 				this.currentPage = page;
 				if(!this.isCurrentLayout(layout.name)) {
 					this.currentLayout = layout;
@@ -130,13 +141,13 @@ benderDefine('Bender:Views', function (app) {
 				return this.initialized[viewName];
 			},
 
-			initialize: function (viewName) {
+			initialize: function (viewName, options) {
 				var template = this.getTemplate(viewName);
 				var module = this.getModule(viewName);
-				var view = this.initialized[viewName] = new (this.get(viewName))({
+				var view = this.initialized[viewName] = new (this.get(viewName))(_.extend({
 					template: template,
 					el: module.el
-				});
+				}, options));
 				view.template = template;
 				return view;
 			},
