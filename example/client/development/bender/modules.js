@@ -56,30 +56,38 @@
 	// ------------- end of Module
 
 	//---------- Queue API
-	var Queue = function (modules, next) {
-		this.modules = modules;
+	var Queue = function (names, next, controller) {
+		this.modules = {};
+		this.controller = controller;
+		this.names = names;
 		this.next = next;
 		app.Events.on('MODULE_DEFINED', this.onModuleDefined, this);
 	};
 	_.extend(Queue.prototype, {
 		onModuleDefined: function (module) {
 			//если модуль из этой очереди, то удалить его из очереди
-			if (this.exist(module.name))
-				this.modules.splice(this.modules.indexOf(module.name), 1);
-
-
-			//когда все модули загружены
-			if (!this.modules.length){
-				app.Events.off('MODULE_DEFINED', this.onModuleDefined, this);
-				//колбэк самого первого уровня вложенности (относительно очереди)
-				this.next();
+			if (this.exist(module.name)) {
+				this.modules[module.name] = module;
+				this.names.splice(this.names.indexOf(module.name), 1);
 			}
 
+			//когда все модули загружены
+			if (!this.names.length){
+				app.Events.off('MODULE_DEFINED', this.onModuleDefined, this);
+				//формирую список модулей и их зависимостей
+				_.each(this.modules, function (module) {
+					_.each(module.deps, function (dep) {
+						!this.modules[dep] && (this.modules[dep] = this.controller.getModule(dep))
+					}, this)
+				}, this);
+				//колбэк самого первого уровня вложенности (относительно очереди)
+				this.next(this.modules);
+			}
 			return this;
 		},
 
 		exist: function (moduleName) {
-			return _.find(this.modules, function (module) {
+			return _.find(this.names, function (module) {
 				return module === moduleName;
 			});
 		}
@@ -90,12 +98,15 @@
 	var Controller = function(mainApp){
 		app = mainApp;
 		this.modules = {};
-		this.queue = {};
 		this.init();
 	};
 	_.extend(Controller.prototype, {
 		get: function (name) {
 			return this.modules[name].implementation;
+		},
+
+		getModule: function (name) {
+			return this.modules[name];
 		},
 
 		define: function (moduleName, fn) {
@@ -124,7 +135,7 @@
 			var missing = this.findMissing(modules);
 			//если модули уже загружены - вызов
 			if (!missing.length) return next();
-			new Queue(_.clone(missing), next);
+			new Queue(_.clone(missing), next, this);
 			missing = _.map(missing, function (moduleName) {
 				return app.transformToPath(moduleName);
 			}, this);

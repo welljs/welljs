@@ -82,7 +82,7 @@ benderDefine('Bender:Views', function (app) {
 					app.Events.on('MODULE_COMPLETED', function (module) {
 						console.log(module);
 					}, this);
-					return app.Modules.require([action.module], function () {
+					return app.Modules.require([action.module], function (modules, queue) {
 						//тут модули загруже
 						app.Events.off('MODULE_COMPLETED');
 						self.tryToRender(action, params);
