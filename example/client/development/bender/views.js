@@ -60,22 +60,16 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			complete: function (module) {
-				var templates = _.union([this.getTemplate(module)], this.getPartials(module));
-				var defs = [];
-				var self = this;
-				_.each(templates, function (template) {
-					defs.push(this.loadTemplate())
-				},this);
-				$.when.apply(null, function () {
-					_.each(templates, function (template) {
-						if (_.isString(template)) {
-							this.loadTemplate(template, function () {
-								//событие должно
+				var templates = [];
+				var template = this.getTemplate(module);
+				if (template)
+					templates.push(app.transformToPath(template));
 
-							})
-						}
-					}, self);
-				}).then(function () {
+				_.each(this.getPartials(module), function (partial) {
+					templates.push(app.transformToPath(partial));
+				}, this);
+
+				app.Templates.load(templates, function () {
 					app.Events.trigger('MODULE_COMPLETED', module);
 				});
 			},

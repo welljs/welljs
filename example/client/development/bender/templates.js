@@ -38,28 +38,44 @@ benderDefine('Bender:Templates', function (app) {
 				return this.storage[name];
 			},
 
+			transformNames: function (paths) {
+				return _.map(paths, function (path) {
+					//если шаблон уже загружен, то
+					return this.exist(name) ? this.exist(name) : app.transformToName(path);
+				});
+			},
+
 			//from html
 			load: function (path, next, err) {
-				var def = $.Deferred();
-				var name = app.transformToName(path);
-				if (this.exist(name))
-					return next(this.get(name));
-				$.ajax({
-					url: this.config.html + path +'.html',
-					dataType: 'html',
-					context: this,
-					success: function (html) {
-						var template = create({
-							path: path,
-							renderer: Handlebars.compile(html)
-						});
-						this.storage[name] = template;
-						_.isFunction(next) && next(template);
-					},
-					error: function (res) {
-						_.isFunction(err) && err(res);
-					}
-				});
+				var names = [];
+				var self = this;
+				_.isString(path) && (path = [path]);
+				for (var i = path.len - 1; i >= 0; i-- ) {
+					this.exist(name)
+						? path.splice(i, 1)
+						: names.push(path[i] = app.transformToName(path[i]));
+				}
+				var defs = [];
+				_.each(path, function (file) {
+					defs.push(
+						$.ajax({
+							url: this.config.html + file +'.html',
+							dataType: 'html',
+							context: this,
+							success: function (html) {
+								var template = create({
+									path: path,
+									renderer: Handlebars.compile(html)
+								});
+								this.storage[name] = template;
+							},
+							error: function (res) {
+								_.isFunction(err) && err(res);
+							}
+						})
+					);
+				},self);
+				$.when.apply($, defs).then(_.isFunction(next) && next());
 			},
 
 			//from precompiled
