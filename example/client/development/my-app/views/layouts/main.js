@@ -9,12 +9,12 @@ benderDefine('Views:Layouts:Main', function (app) {
 		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
 				this.template = options.template;
+				Handlebars.registerPartial('sidebar', app.Templates.get('Parts:Sidebar').render());
 			},
 			render: function () {
 				this.$el.html(this.template.render({page: app.Views.currentPage.name}));
-				this.sidebarHolder = this.$('#page-sidebar');
 				this.sidebar = app.Views.initialize('Views:Parts:Sidebar', {
-//					el:
+					el: this.$('#page-sidebar')
 				});
 				this.sidebar.render();
 				this.pageContainer = this.$('.page-content');

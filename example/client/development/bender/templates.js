@@ -40,6 +40,7 @@ benderDefine('Bender:Templates', function (app) {
 
 			//from html
 			load: function (path, next, err) {
+				var def = $.Deferred();
 				var name = app.transformToName(path);
 				if (this.exist(name))
 					return next(this.get(name));
