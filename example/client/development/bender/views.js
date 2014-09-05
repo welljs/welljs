@@ -119,20 +119,26 @@ benderDefine('Bender:Views', function (app) {
 						});
 					});
 				}
-
-				var layout = this.getLayout(page);
-				var layoutView;
-				this.currentPage = page;
-				if(!this.isCurrentLayout(layout.name)) {
-					this.currentLayout = layout;
-					if (!layout.el)
-						layout.el = $(this.config.layoutHolder);
-						layoutView = this.render(layout.name, params);
-				}
-				page.el = layoutView.pageContainer;
-				this.render(page.name, params);
+				//когда загружены все данные, можно отрендерить лэйаут и страницу
+				this.renderLayout(this.getLayout(page), params);
+				this.renderPage(page, params);
 				this.hideOverlay();
 				return this;
+			},
+
+			renderPage: function (module, params) {
+				this.currentPage = module;
+				module.el = this.currentLayout.view.pageContainer;
+				return this.render(module.name, params);
+			},
+
+			renderLayout: function (module, params) {
+				if (this.isCurrentLayout(module.name)) return this.currentLayout.view;
+				this.currentLayout = module;
+				if (!module.el)
+					module.el = $(this.config.layoutHolder);
+				this.currentLayout.view = this.render(module.name, params);
+				return this.currentLayout.view = this.render(module.name, params);
 			},
 
 			render: function (viewName, params) {

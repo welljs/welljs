@@ -12,7 +12,7 @@ benderDefine('Views:Layouts:Main', function (app) {
 				Handlebars.registerPartial('sidebar', app.Templates.get('Parts:Sidebar').render());
 			},
 			render: function () {
-				this.$el.html(this.template.render({page: app.Views.currentPage.name}));
+				this.$el.html(this.template.render());
 				this.sidebar = app.Views.initialize('Views:Parts:Sidebar', {
 					el: this.$('#page-sidebar')
 				});
