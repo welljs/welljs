@@ -121,13 +121,15 @@ benderDefine('Bender:Views', function (app) {
 				}
 
 				var layout = this.getLayout(page);
+				var layoutView;
 				this.currentPage = page;
 				if(!this.isCurrentLayout(layout.name)) {
 					this.currentLayout = layout;
 					if (!layout.el)
 						layout.el = $(this.config.layoutHolder);
-					this.render(layout.name, params);
+						layoutView = this.render(layout.name, params);
 				}
+				page.el = layoutView.pageContainer;
 				this.render(page.name, params);
 				this.hideOverlay();
 				return this;
@@ -141,7 +143,7 @@ benderDefine('Bender:Views', function (app) {
 				if (_.isFunction(view.render)) {
 					view.render(params);
 				}
-				return this;
+				return view;
 			},
 
 			getInitialized: function (viewName) {

@@ -5,7 +5,9 @@ benderDefine('MyStrategy', function (app) {
 		app.Router.configure({
 			actions: {
 				'/': 'Views:Pages:Home',
-				'page-one': 'Views:Pages:PageOne'
+				'page-one': 'Views:Pages:PageOne',
+				'page-two': 'Views:Pages:PageOne',
+				'settings': 'Views:Pages:Settings'
 			},
 			routes: [
 				/^[A-Za-z0-9\/_-]{0,24}$/
