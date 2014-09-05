@@ -1,4 +1,4 @@
-benderDefine('Bender:Strategy', function (app) {
+benderDefine('MyStrategy', function (app) {
 	//если надо использовать глобально как app.PluginName то указать через
 //	this.use('Plugins:Bender:BreadCrumbs as BreadCrumbs');
 	return function () {
