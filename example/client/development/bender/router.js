@@ -32,8 +32,8 @@ benderDefine('Bender:Router', function (app) {
 		},
 
 		configure: function (config) {
-			if (!config.actions['404'])
-				config.actions['404'] = 'Views:Pages:404';
+			if (!config.actions['not-found'])
+				config.actions['not-found'] = 'Bender:Public:NotFound';
 			this.config = config;
 			this.defineRoutes(config.routes);
 			this.beforeStart = config.beforeStart || function(){};
@@ -51,9 +51,10 @@ benderDefine('Bender:Router', function (app) {
 		},
 
 		getRouteAction: function (route) {
+			var mod = this.config.actions[route];
 			return {
-					module: this.config.actions[route] || '404',
-					route: route
+					module: mod || 'Bender:Public:NotFound',
+					route: mod ? route : 'not-found'
 				};
 		},
 

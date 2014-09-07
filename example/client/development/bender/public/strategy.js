@@ -20,27 +20,6 @@ benderDefine('Bender:Public:Strategy', function (app) {
 			html: '/'
 		});
 
-		//страница 404 по-умолчанию, если не найдена пользовательская
-		benderDefine('Bender:Public:NotFound', function () {
-			this.use('Bender:Public:Layout');
-			this.configure({
-				template: 'Bender:Public:NotFound',
-				layout: 'Bender:Public:Layout',
-				type: 'view'
-			});
-			return function () {
-				return Backbone.View.extend({
-					initialize: function () {
-
-					},
-					render: function () {
-						this.$el.html(this.template.render());
-					}
-
-				});
-			}
-		});
-
 		//страница по-умолчанию, если приложение не создано или не найдено
 		benderDefine('Bender:Public:About', function () {
 			this.use('Bender:Public:Layout');

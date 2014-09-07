@@ -1,10 +1,10 @@
-benderDefine('Views:Pages:Settings', function (app) {
+benderDefine('Views:Pages:Catalog', function (app) {
 	this.use('Views:Common:Base');
 	this.use('Views:Layouts:Main');
 	this.configure({
 		layout: 'Views:Layouts:Main',
-		template: 'Pages:PageOne',
-		route: '/page-one'
+		template: 'Pages:Catalog',
+		route: 'catalog'
 	});
 	return function () {
 	  return app.Views.get('Views:Common:Base').extend({
@@ -12,7 +12,24 @@ benderDefine('Views:Pages:Settings', function (app) {
 				this.template = options.template;
 			},
 			render: function () {
-				this.$el.html(this.template.render());
+				var cats = [
+					{
+						name: 'Camera',
+						id: 1,
+						brand: 'Sony'
+					},
+					{
+						name: 'Smartphone',
+						id: 2,
+						brand: 'Nokia'
+					},
+					{
+						name: 'TV',
+						id: 3,
+						brand: 'Samsung'
+					}
+				];
+				this.$el.html(this.template.render({cats: cats}));
 				return this;
 			}
 		});

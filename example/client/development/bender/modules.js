@@ -138,11 +138,11 @@
 		},
 
 		define: function (moduleName, fn) {
-			var controller = this;
+			var self = this;
 			new Module(moduleName, fn, function (module) {
-				controller.modules[moduleName] = module;
+				self.modules[moduleName] = module;
 				app.Events.trigger('MODULE_DEFINED', module);
-			}.bind(this));
+			});
 			return this;
 		},
 
@@ -165,7 +165,7 @@
 			if (_.isEmpty(missing)) {
 				return next(this.pack(modules));
 			}
-			new Queue(_.clone(modules), next, this);
+			new Queue(_.clone(missing), next, this);
 			missing = _.map(missing, function (moduleName) {
 				return app.transformToPath(moduleName);
 			}, this);
