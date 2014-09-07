@@ -37,7 +37,7 @@ benderDefine('Bender:Router', function (app) {
 			this.config = config;
 			this.defineRoutes(config.routes);
 			this.beforeStart = config.beforeStart || function(){};
-			this.start();
+//			this.start();
 			return this;
 		},
 

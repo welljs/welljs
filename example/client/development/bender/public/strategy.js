@@ -1,5 +1,25 @@
 benderDefine('Bender:Public:Strategy', function (app) {
 	return function () {
+		//это должно конфигурироваться до загрузки модулей
+
+		app.Router.configure({
+			actions: {
+				'/': 'Bender:Public:About',
+				'not-found': 'Bender:Public:NotFound'
+			},
+			routes: [
+				/^[A-Za-z0-9\/_-]{0,24}$/
+			]
+		});
+
+		app.Views.configure({
+			layoutHolder: 'body'
+		});
+
+		app.Templates.configure({
+			html: '/'
+		});
+
 		//страница 404 по-умолчанию, если не найдена пользовательская
 		benderDefine('Bender:Public:NotFound', function () {
 			this.use('Bender:Public:Layout');
@@ -61,29 +81,13 @@ benderDefine('Bender:Public:Strategy', function (app) {
 			}
 		});
 
-		app.Router.configure({
-			actions: {
-				'/': 'Bender:Public:About',
-				'not-found': 'Bender:Public:NotFound'
-			},
-			routes: [
-				/^[A-Za-z0-9\/_-]{0,24}$/
-			]
-		});
-
-		app.Views.configure({
-			layoutHolder: 'body'
-		});
-
-		app.Templates.configure({
-			html: '/'
-		});
+		//роутер конфигурируется в конце, либо убрать из него хистори старт
 
 		Handlebars.registerHelper('url', function (route) {
 			return '/#' + route;
 		});
 
-
+		app.start();
 
 	}
 });

@@ -60,7 +60,12 @@
 			console.log('Defaults will be loaded');
 			this.options.strategy = this.defaults.strategy;
 			this.options.router = this.defaults.router;
+			this.isProduction = true;
 			this.loadCore();
+		},
+
+		start: function () {
+		  this.Router.start();
 		},
 
 		//SomeModule:Name -> some-module/name

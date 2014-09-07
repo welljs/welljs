@@ -7,14 +7,19 @@
 		this.deps = [];
 		this.config = {};
 		this.onCompleteFns = [];
+		this.controller = app.Modules;
 		try {
 			this.implementation = fn.call(this, app);
 		}
 		catch (e) {
 			console.log('error in module: ' + name);
 		}
+
 		this.setType(this.config.type || name.split(':')[0]);
-		this.deps.length ? this.loadDeps(next) : next(this);
+
+		_.isEmpty(this.deps)
+			? next(this)
+			: this.waitForDeps(next);
 	};
 	_.extend(Module.prototype, {
 		use: function (module) {
@@ -45,13 +50,35 @@
 			return this;
 		},
 
-		loadDeps: function (next) {
-			app.Modules.require(this.deps, function () {
-				next(this);
-			}.bind(this), function (err) {
-				console.log('Error in deps requiring...');
-				console.log(err);
-			});
+		waitForDeps: function (next) {
+			var deps = _.clone(this.controller.findMissing(this.deps));
+			var self = this;
+
+			//тут ожидается define всех зависимостей
+			function handle(module) {
+				var index = self.deps.indexOf(module.name);
+				if (index === -1) return;
+				deps.splice(index, 1);
+				if (_.isEmpty(deps)) {
+					app.Events.off('MODULE_DEFINED', handle, this);
+					next(self);
+				}
+
+			}
+			// на продакше модули собраны в один файл.
+			// их не надо подгружать, нужно просто дождаться пока определятся нужные
+			if (app.isProduction) {
+				app.Events.on('MODULE_DEFINED', handle, this);
+			}
+			else {
+				//на девелопменте разобраны по файлам и их надо подгружать
+				app.Modules.require(this.deps, function () {
+					next(this);
+				}.bind(this), function (err) {
+					console.log('Error in deps requiring...');
+					console.log(err);
+				});
+			}
 			return this;
 		}
 	});
@@ -67,6 +94,8 @@
 	};
 	_.extend(Queue.prototype, {
 		onModuleDefined: function (module) {
+			//если есть зависимость, добавить ее в массив
+
 			//если модуль из этой очереди, то удалить его из очереди
 			if (this.exist(module.name)) {
 				this.modules[module.name] = module;
@@ -77,13 +106,8 @@
 			if (!this.names.length){
 				app.Events.off('MODULE_DEFINED', this.onModuleDefined, this);
 
-				var exportList =_.extend(this.modules, this.controller.getDeps(this.modules));
 				//формирую список модулей и их зависимостей
-//				_.each(this.modules, function (module) {
-//					_.each(module.deps, function (dep) {
-//						!this.modules[dep] && (this.modules[dep] = this.controller.getModule(dep))
-//					}, this)
-//				}, this);
+				var exportList =_.extend(this.modules, this.controller.getDeps(this.modules));
 				//колбэк самого первого уровня вложенности (относительно очереди)
 				this.next(exportList, this);
 			}
@@ -167,7 +191,7 @@
 			_.each(names, function (name) {
 				res[name] = this.getModule(name);
 			}, this);
-			return _.extend(res, this.getDeps(names));
+			return _.extend(res, this.getDeps(res));
 		},
 
 		getDeps: function (modules) {

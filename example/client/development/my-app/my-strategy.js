@@ -1,13 +1,10 @@
 benderDefine('MyStrategy', function (app) {
-	//если надо использовать глобально как app.PluginName то указать через
-//	this.use('Plugins:Bender:BreadCrumbs as BreadCrumbs');
 	return function () {
 		app.Router.configure({
 			actions: {
 				'/': 'Views:Pages:Home',
-				'page-one': 'Views:Pages:PageOne',
-				'page-two': 'Views:Pages:PageOne',
-				'settings': 'Views:Pages:Settings'
+				'cart': 'Views:Pages:Cart',
+				'catalog': 'Views:Pages:Catalog'
 			},
 			routes: [
 				/^[A-Za-z0-9\/_-]{0,24}$/
@@ -27,5 +24,6 @@ benderDefine('MyStrategy', function (app) {
 			return '/#' + route;
 		});
 
+		app.start();
 	}
 });

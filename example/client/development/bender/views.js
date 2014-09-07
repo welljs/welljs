@@ -85,20 +85,23 @@ benderDefine('Bender:Views', function (app) {
 
 			waitOnQueueComplete: function (modules, next) {
 				var missing = {};
-				app.Events.on('MODULE_COMPLETED', function (module) {
-					if (_.isEmpty(missing)) {
-						_.each(modules, function (mod) {
-							if (_.isString(this.getTemplate(mod)))
-								missing[mod.name] = _.clone(mod);
-						}, this);
-					}
 
+				if (_.isEmpty(missing)) {
+					_.each(modules, function (mod) {
+						if (_.isString(this.getTemplate(mod)))
+							missing[mod.name] = _.clone(mod);
+						else
+							mod.isComplete = true;
+					}, this);
+				}
+
+				app.Events.on('MODULE_COMPLETED', function (module) {
 					if (!missing[module.name])
 						return;
-
 					delete missing[module.name];
 					if (_.isEmpty(missing)) {
 						app.Events.off('MODULE_COMPLETED');
+						module.isComplete = true;
 						return next.call(this)
 					}
 				}, this);
@@ -111,7 +114,7 @@ benderDefine('Bender:Views', function (app) {
 
 				// если страница еще  не загружена, то ожидается загрузка модуля загрузки,
 				// всех зависимостей в т.ч. шаблонов, и после этого делается еще одна попытка рендера
-				if (!page) {
+				if (!page || !page.isComplete) {
 					this.showOverlay();
 					return app.Modules.require([action.module], function (modules, queue) {
 						self.waitOnQueueComplete(modules, function () {
@@ -119,6 +122,7 @@ benderDefine('Bender:Views', function (app) {
 						});
 					});
 				}
+
 				//когда загружены все данные, можно отрендерить лэйаут и страницу
 				this.renderLayout(this.getLayout(page), params);
 				this.renderPage(page, params);
