@@ -22,5 +22,10 @@ benderDefine('MyStrategy', function (app) {
 //			precompiled: true,
 			html: '/my-app/views/templates/html/'
 		});
+
+		Handlebars.registerHelper('url', function (route) {
+			return '/#' + route;
+		});
+
 	}
 });

@@ -1,6 +1,6 @@
 (function () {
 	new Bender({
-		appPath: '/my-app',
+		appPath: '/my-appe',
 		strategy: 'MyStrategy'
 	});
 })();

@@ -13,7 +13,7 @@
 		catch (e) {
 			console.log('error in module: ' + name);
 		}
-		this.setType(name.split(':')[0]);
+		this.setType(this.config.type || name.split(':')[0]);
 		this.deps.length ? this.loadDeps(next) : next(this);
 	};
 	_.extend(Module.prototype, {
@@ -32,12 +32,14 @@
 		},
 
 		setType: function (type) {
-			switch (type) {
-				case 'Views': this.isView = true; break;
-				case 'Models': this.isModel = true; break;
-				case 'Collections': this.isCollection = true; break;
-				case 'Plugins': this.isPlugin = true; break;
-				case 'Bender': this.isCore = true; break;
+			if (type.substr(-1) === 's')
+				type = type.slice(0, -1);
+			switch (type.toLowerCase()) {
+				case 'view': this.isView = true; break;
+				case 'model': this.isModel = true; break;
+				case 'collection': this.isCollection = true; break;
+				case 'plugin': this.isPlugin = true; break;
+				case 'bender': this.isCore = true; break;
 			}
 			this.config['type'] = type;
 			return this;
@@ -74,14 +76,16 @@
 			//когда все модули загружены
 			if (!this.names.length){
 				app.Events.off('MODULE_DEFINED', this.onModuleDefined, this);
+
+				var exportList =_.extend(this.modules, this.controller.getDeps(this.modules));
 				//формирую список модулей и их зависимостей
-				_.each(this.modules, function (module) {
-					_.each(module.deps, function (dep) {
-						!this.modules[dep] && (this.modules[dep] = this.controller.getModule(dep))
-					}, this)
-				}, this);
+//				_.each(this.modules, function (module) {
+//					_.each(module.deps, function (dep) {
+//						!this.modules[dep] && (this.modules[dep] = this.controller.getModule(dep))
+//					}, this)
+//				}, this);
 				//колбэк самого первого уровня вложенности (относительно очереди)
-				this.next(this.modules, this);
+				this.next(exportList, this);
 			}
 			return this;
 		},
@@ -134,8 +138,10 @@
 		require: function (modules, next, err) {
 			var missing = this.findMissing(modules);
 			//если модули уже загружены - вызов
-			if (!missing.length) return next();
-			new Queue(_.clone(missing), next, this);
+			if (_.isEmpty(missing)) {
+				return next(this.pack(modules));
+			}
+			new Queue(_.clone(modules), next, this);
 			missing = _.map(missing, function (moduleName) {
 				return app.transformToPath(moduleName);
 			}, this);
@@ -154,6 +160,24 @@
 			return _.filter(list, function (moduleName) {
 				return !this.exist(moduleName);
 			}, this);
+		},
+
+		pack: function (names) {
+			var res = {};
+			_.each(names, function (name) {
+				res[name] = this.getModule(name);
+			}, this);
+			return _.extend(res, this.getDeps(names));
+		},
+
+		getDeps: function (modules) {
+			var res = {};
+			_.each(modules, function (module) {
+				_.each(module.deps, function (dep) {
+					res[dep] = this.getModule(dep);
+				}, this)
+			}, this);
+			return res;
 		}
 	});
 	window.BenderModuleController = Controller;

@@ -1,11 +1,15 @@
 (function () {
 	'use strict';
 	var App = function (opts) {
+		var defs = this.defaults = {
+			strategy: 'Bender:Public:Strategy',
+			router: 'Bender:Router'
+		};
 		this.isProduction = (ENV && ENV === 'production');
 		this.Events = _.extend(Backbone.Events, {});
 		this.options = opts;
-		!opts.router && (this.options.router = 'Bender:Router');
-		!opts.strategy && (this.options.strategy = 'Bender:Strategy');
+		!opts.router && (this.options.router = defs.router);
+		!opts.strategy && (this.options.strategy = defs.strategy);
 		this.init();
 	};
 
@@ -53,6 +57,10 @@
 
 		onCoreLoadError: function (err) {
 			console.log(err.message);
+			console.log('Defaults will be loaded');
+			this.options.strategy = this.defaults.strategy;
+			this.options.router = this.defaults.router;
+			this.loadCore();
 		},
 
 		//SomeModule:Name -> some-module/name

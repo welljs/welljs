@@ -2,6 +2,7 @@ benderDefine('Bender:Router', function (app) {
 	return Backbone.Router.extend({
 		currentPage: null,
 		initialize: function () {
+			this.config = {};
 		},
 
 		defineRoutes: function (routes) {
@@ -31,7 +32,9 @@ benderDefine('Bender:Router', function (app) {
 		},
 
 		configure: function (config) {
-			this.config= config;
+			if (!config.actions['404'])
+				config.actions['404'] = 'Views:Pages:404';
+			this.config = config;
 			this.defineRoutes(config.routes);
 			this.beforeStart = config.beforeStart || function(){};
 			this.start();
@@ -49,7 +52,7 @@ benderDefine('Bender:Router', function (app) {
 
 		getRouteAction: function (route) {
 			return {
-					module: this.config.actions[route],
+					module: this.config.actions[route] || '404',
 					route: route
 				};
 		},
