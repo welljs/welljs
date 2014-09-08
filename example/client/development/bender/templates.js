@@ -38,39 +38,55 @@ benderDefine('Bender:Templates', function (app) {
 				return this.storage[name];
 			},
 
-			//from html
-			load: function (path, next, err) {
-				var names = [];
+			isNotFound: function (name) {
+				return (name.indexOf('NotFound') !== -1 || name.indexOf('not-found') !== -1);
+			},
+
+			load: function (names, next, err) {
+				var paths = [];
 				var self = this;
-				_.isString(path) && (path = [path]);
-				for (var i = path.length - 1; i >= 0; i-- ) {
+				//name может быть массивом или обычным названием модуля. надо привести все к массиву
+				_.isString(names) && (names = [names]);
+
+				for (var i = names.length - 1; i >= 0; i-- ) {
+					var name = names[i];
 					this.exist(name)
-						? path.splice(i, 1)
-						: names.push(app.transformToName(path[i]));
+						? names.splice(i, 1)
+						: paths.push(app.transformToPath(name));
 				}
 				var defs = [];
-				_.each(path, function (file, index) {
+				_.each(paths, function (file, index) {
+					var path = this.isNotFound(names[index]) ? '/' : this.config.html;
 					defs.push(
-						$.ajax({
-							url: this.config.html + file +'.html',
-							dataType: 'html',
-							context: this,
-							success: function (html) {
-								var template = create({
-									path: path,
-									renderer: Handlebars.compile(html)
-								});
-								this.storage[app.transformToName(file)] = template;
-							},
-							error: function (res) {
-								_.isFunction(err) && err(res);
-							}
-						})
+						this.getAjax(path, file, err)
 					);
 				},self);
 				$.when.apply($, defs).then(
 						_.isFunction(next) && next
 				);
+			},
+
+			load404: function (path, file) {
+				this.load(path || 'bender/public/', file || 'not-found');
+			},
+
+			//from html
+			getAjax: function (path, file, err) {
+				return $.ajax({
+					url: path + file +'.html',
+					dataType: 'html',
+					context: this,
+					success: function (html) {
+						var template = create({
+							path: path,
+							renderer: Handlebars.compile(html)
+						});
+						this.storage[app.transformToName(file)] = template;
+					},
+					error: function (res) {
+						_.isFunction(err) && err(res);
+					}
+				})
 			},
 
 			//from precompiled

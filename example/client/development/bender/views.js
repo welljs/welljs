@@ -63,10 +63,10 @@ benderDefine('Bender:Views', function (app) {
 				var templates = [];
 				var template = this.getTemplate(module);
 				if (template)
-					templates.push(app.transformToPath(template));
+					templates.push(template);
 
 				_.each(this.getPartials(module), function (partial) {
-					templates.push(app.transformToPath(partial));
+					templates.push(partial);
 				}, this);
 
 				app.Templates.load(templates, function () {
