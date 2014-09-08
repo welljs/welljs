@@ -14,6 +14,7 @@ benderDefine('Bender:Templates', function (app) {
 		var Controller = function () {
 			this.storage = {};
 			this.config = {};
+			this.defaults = {};
 			this._start();
 		};
 
@@ -42,38 +43,26 @@ benderDefine('Bender:Templates', function (app) {
 				return (name.indexOf('NotFound') !== -1 || name.indexOf('not-found') !== -1);
 			},
 
-			load: function (names, next, err) {
-				var paths = [];
-				var self = this;
-				//name может быть массивом или обычным названием модуля. надо привести все к массиву
-				_.isString(names) && (names = [names]);
+			load: function (files, next, err) {
+				var missing = _.filter(files, function (file) {
+					return !this.exist(file.name)
+				}, this);
 
-				for (var i = names.length - 1; i >= 0; i-- ) {
-					var name = names[i];
-					this.exist(name)
-						? names.splice(i, 1)
-						: paths.push(app.transformToPath(name));
-				}
 				var defs = [];
-				_.each(paths, function (file, index) {
-					var path = this.isNotFound(names[index]) ? '/' : this.config.html;
+				_.each(missing, function (file, index) {
 					defs.push(
-						this.getAjax(path, file, err)
+						this.getAjax(file.path, file.name, err)
 					);
-				},self);
+				}, this);
 				$.when.apply($, defs).then(
 						_.isFunction(next) && next
 				);
 			},
 
-			load404: function (path, file) {
-				this.load(path || 'bender/public/', file || 'not-found');
-			},
-
 			//from html
 			getAjax: function (path, file, err) {
 				return $.ajax({
-					url: path + file +'.html',
+					url: path + '.html',
 					dataType: 'html',
 					context: this,
 					success: function (html) {
@@ -112,6 +101,7 @@ benderDefine('Bender:Templates', function (app) {
 				return this;
 			}
 		});
+
 		return new Controller();
 	};
 });

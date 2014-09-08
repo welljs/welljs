@@ -12,16 +12,17 @@ benderDefine('MyStrategy', function (app) {
 		});
 
 		app.Views.configure({
-			layoutHolder: 'body'
-		});
-
-		app.Templates.configure({
-//			precompiled: true,
-			html: '/my-app/views/templates/html/'
+			layoutHolder: 'body',
+			templates: '/my-app/views/templates/html/',
+			html: true
 		});
 
 		Handlebars.registerHelper('url', function (route) {
 			return '/#' + route;
+		});
+
+		app.Modules.require(['Helpers'], function (modules) {
+			app.Helpers = new(app.Modules.get('Helpers'));
 		});
 
 		app.start();

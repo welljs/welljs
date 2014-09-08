@@ -3,7 +3,7 @@ benderDefine('Views:Pages:Cart', function (app) {
 	this.use('Views:Layouts:Main');
 	this.configure({
 		layout: 'Views:Layouts:Main',
-		template: 'Pages:Catalog',
+		template: 'Pages:Cart',
 		route: '/catalog'
 	});
 	return function () {

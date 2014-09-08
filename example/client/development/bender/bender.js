@@ -84,7 +84,16 @@
 			return _.map(arr, function (str) {
 				return str.charAt(0).toUpperCase() + str.slice(1);
 			});
+		},
+
+		getFileName: function (modName) {
+			return /:([^:]+)$/.exec(modName)[1];
+		},
+
+		getDefaultsPath: function () {
+			return '/bender/public/'
 		}
+
 	});
 
 	window.Bender = App;

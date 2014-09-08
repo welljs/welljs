@@ -62,25 +62,25 @@ benderDefine('Bender:Views', function (app) {
 			complete: function (module) {
 				var templates = [];
 				var template = this.getTemplate(module);
-				if (template)
-					templates.push(template);
+				if (template) {
+					templates.push({
+						name: template,
+						path: this.getHtmlPath(module) + app.transformToPath(module.getConfigParam('template'))
+					});
+				}
 
 				_.each(this.getPartials(module), function (partial) {
-					templates.push(partial);
+					templates.push({
+						name: partial,
+						path: this.getHtmlPath(module) + app.transformToPath(partial)
+					});
 				}, this);
 
-				app.Templates.load(templates, function () {
-					app.Events.trigger('MODULE_COMPLETED', module);
-				});
-			},
-
-			loadTemplate: function (name, next) {
-				var controller = this;
-				app.Templates.load(app.transformToPath(name), function () {
-					next.call(controller);
-				}, function (err) {
-					console.log(err);
-				});
+				if (!_.isEmpty(templates)) {
+					app.Templates.load(templates, function () {
+						app.Events.trigger('MODULE_COMPLETED', module);
+					});
+				}
 			},
 
 			waitOnQueueComplete: function (modules, next) {
@@ -109,7 +109,7 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			tryToRender: function (action, params) {
-				var page = app.Modules.findBy('route', action.route);
+				var page = app.Modules.getModule(action.module);
 				var self = this;
 
 				// если страница еще  не загружена, то ожидается загрузка модуля загрузки,
@@ -137,11 +137,11 @@ benderDefine('Bender:Views', function (app) {
 			},
 
 			renderLayout: function (module, params) {
-				if (this.isCurrentLayout(module.name)) return this.currentLayout.view;
+				if (this.isCurrentLayout(module.name))
+					return this.currentLayout.view;
 				this.currentLayout = module;
-				if (!module.el)
+//				if (!module.el)
 					module.el = $(this.config.layoutHolder);
-				this.currentLayout.view = this.render(module.name, params);
 				return this.currentLayout.view = this.render(module.name, params);
 			},
 
@@ -181,6 +181,12 @@ benderDefine('Bender:Views', function (app) {
 
 			hideOverlay: function () {
 				this.isOverlayVisible = false;
+			},
+
+			getHtmlPath: function (module) {
+				return (module.getConfigParam('isDefault'))
+					? '/'
+					: (this.config.templates || '/');
 			}
 
 		});

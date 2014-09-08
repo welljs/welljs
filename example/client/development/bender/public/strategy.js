@@ -13,55 +13,12 @@ benderDefine('Bender:Public:Strategy', function (app) {
 		});
 
 		app.Views.configure({
-			layoutHolder: 'body'
-		});
-
-		app.Templates.configure({
-			html: '/'
-		});
-
-		//страница по-умолчанию, если приложение не создано или не найдено
-		benderDefine('Bender:Public:About', function () {
-			this.use('Bender:Public:Layout');
-			this.configure({
-				template: 'Bender:Public:About',
-				layout: 'Bender:Public:Layout',
-				route: '/',
-				type: 'view'
-			});
-			return function () {
-				return Backbone.View.extend({
-					initialize: function () {
-
-					},
-					render: function () {
-						this.$el.html(this.template.render());
-					}
-				});
-			}
-		});
-
-		//если в пользовательском приложении лэйаут не указан, будет использоваться этот
-		benderDefine('Bender:Public:Layout', function () {
-			this.configure({
-				type: 'view',
-				template: 'Bender:Public:Layout'
-			});
-			return function () {
-				return Backbone.View.extend({
-					initialize: function () {
-					},
-
-					render: function () {
-						this.$el.html(this.template.render());
-						this.pageContainer = this.$('.main');
-					}
-				});
-			}
+			layoutHolder: 'body',
+			templates: '/',
+			html: true
 		});
 
 		//роутер конфигурируется в конце, либо убрать из него хистори старт
-
 		Handlebars.registerHelper('url', function (route) {
 			return '/#' + route;
 		});

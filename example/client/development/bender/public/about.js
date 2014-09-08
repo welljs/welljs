@@ -1,10 +1,10 @@
-//страница 404 по-умолчанию, если не найдена пользовательская
-benderDefine('Bender:Public:NotFound', function () {
+//страница по-умолчанию, если приложение не создано или не найдено
+benderDefine('Bender:Public:About', function () {
 	this.use('Bender:Public:Layout');
-//	this.use('Bender:Public:Layout');
 	this.configure({
-		template: 'Bender:Public:NotFound',
+		template: 'Bender:Public:About',
 		layout: 'Bender:Public:Layout',
+		route: '/',
 		type: 'view',
 		isDefault: true
 	});
@@ -16,7 +16,6 @@ benderDefine('Bender:Public:NotFound', function () {
 			render: function () {
 				this.$el.html(this.template.render());
 			}
-
 		});
 	}
 });
