@@ -2,7 +2,7 @@
 benderDefine('Bender:Public:Layout', function () {
 	this.configure({
 		type: 'view',
-		template: 'Bender:Public:Layout',
+		template: 'Bender:Bender:Public:Layout',
 		isDefault: true
 	});
 	return function () {

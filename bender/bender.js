@@ -1,25 +1,28 @@
 (function () {
 	'use strict';
-	var App = function (opts) {
+	var App = function (options) {
+		var opts = this.options = options || {};
 		var defs = this.defaults = {
 			strategy: 'Bender:Public:Strategy',
 			router: 'Bender:Router'
 		};
+
+		if (!window.ENV)
+			window.ENV = 'development';
+
 		this.isProduction = (ENV && ENV === 'production');
 		this.Events = _.extend(Backbone.Events, {});
-		this.options = opts;
-		!opts.router && (this.options.router = defs.router);
-		!opts.strategy && (this.options.strategy = defs.strategy);
+		this.options.router = this.transformToName(opts.router) || defs.router;
+		this.options.strategy = this.transformToName(opts.strategy) || defs.strategy;
 		this.init();
 	};
 
 	_.extend(App.prototype,{
 		requireConfig: function () {
 			requirejs.config({
-				baseUrl: this.options.appPath,
+				baseUrl: this.options.appRoot,
 				paths: {
-					views: '/my-app/views',
-					bender: '/bender'
+					bender: this.options.benderRoot
 				}
 			});
 			return this;
@@ -57,11 +60,16 @@
 
 		onCoreLoadError: function (err) {
 			console.log(err.message);
-			console.log('Defaults will be loaded');
-			this.options.strategy = this.defaults.strategy;
-			this.options.router = this.defaults.router;
-//			this.isProduction = true;
-			this.loadCore();
+			if (this.reloaded) {
+				console.log('Error in project loading! Cant find Benderjs root');
+			}
+			else {
+				console.log('Defaults will be loaded');
+				this.options.strategy = this.defaults.strategy;
+				this.options.router = this.defaults.router;
+				this.loadCore();
+				this.reloaded = true;
+			}
 		},
 
 		start: function () {
@@ -70,12 +78,13 @@
 
 		//SomeModule:Name -> some-module/name
 		transformToPath: function (name) {
-			return name.split(/(?=[A-Z])/).join('-').toLowerCase().split(':-').join('/');
+			return name ? name.split(/(?=[A-Z])/).join('-').toLowerCase().split(':-').join('/') : name;
 		},
 
 		//some/file-name -> Some:FileName
 		transformToName: function (path) {
-			path = this.capitalize(path.split('/')).join(':');
+			if (!path) return;
+			path = this.capitalize(path.replace(/^\//, '').split('/')).join(':');
 			return this.capitalize(path.split('-')).join('');
 		},
 
@@ -93,7 +102,6 @@
 		getDefaultsPath: function () {
 			return '/bender/public/'
 		}
-
 	});
 
 	window.Bender = App;

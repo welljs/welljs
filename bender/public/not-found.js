@@ -3,7 +3,7 @@ benderDefine('Bender:Public:NotFound', function () {
 	this.use('Bender:Public:Layout');
 //	this.use('Bender:Public:Layout');
 	this.configure({
-		template: 'Bender:Public:NotFound',
+		template: 'Bender:Bender:Public:NotFound',
 		layout: 'Bender:Public:Layout',
 		type: 'view',
 		isDefault: true

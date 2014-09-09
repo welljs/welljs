@@ -1,7 +1,7 @@
 benderDefine('Bender:Router', function (app) {
 	return Backbone.Router.extend({
 		currentPage: null,
-		initialize: function () {
+		initialize: function (options) {
 			this.config = {};
 		},
 
@@ -38,17 +38,12 @@ benderDefine('Bender:Router', function (app) {
 			this.config.pushState = config.pushState || false;
 			this.defineRoutes(config.routes);
 			this.beforeStart = config.beforeStart || function(){};
-//			this.start();
 			return this;
 		},
 
 		start: function () {
 			_.isFunction(this.beforeStart) && this.beforeStart();
 			Backbone.history.start({pushState: this.config.pushState});
-		},
-
-		onPagesLoaded: function () {
-			console.log(arguments);
 		},
 
 		getRouteAction: function (route) {
