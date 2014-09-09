@@ -133,22 +133,21 @@ benderDefine('Bender:Views', function (app) {
 			renderPage: function (module, params) {
 				this.currentPage = module;
 				module.el = this.currentLayout.view.pageContainer;
-				return this.render(module.name, params);
+				return this.render(module, params);
 			},
 
 			renderLayout: function (module, params) {
 				if (this.isCurrentLayout(module.name))
 					return this.currentLayout.view;
 				this.currentLayout = module;
-//				if (!module.el)
-					module.el = $(this.config.layoutHolder);
-				return this.currentLayout.view = this.render(module.name, params);
+				module.el = $(this.config.layoutHolder);
+				return this.currentLayout.view = this.render(module, params);
 			},
 
-			render: function (viewName, params) {
-				var view = (this.isInitialized(viewName))
-					? this.getInitialized(viewName)
-					: this.initialize(viewName);
+			render: function (module, params) {
+				var view = (this.isInitialized(module.name))
+					? this.getInitialized(module)
+					: this.initialize(module);
 
 				if (_.isFunction(view.render)) {
 					view.render(params);
@@ -156,13 +155,16 @@ benderDefine('Bender:Views', function (app) {
 				return view;
 			},
 
-			getInitialized: function (viewName) {
-				return this.initialized[viewName];
+			getInitialized: function (module) {
+				var view = this.initialized[module.name];
+				view.$el = module.el;
+				return view;
 			},
 
-			initialize: function (viewName, options) {
-				var template = this.getTemplate(viewName);
-				var module = this.getModule(viewName);
+			initialize: function (module, options) {
+				_.isString(module) && (module = this.getModule(module));
+				var template = this.getTemplate(module);
+				var viewName = module.name;
 				var view = this.initialized[viewName] = new (this.get(viewName))(_.extend({
 					template: template,
 					el: module.el

@@ -4,11 +4,13 @@ benderDefine('MyStrategy', function (app) {
 			actions: {
 				'/': 'Views:Pages:Home',
 				'cart': 'Views:Pages:Cart',
-				'catalog': 'Views:Pages:Catalog'
+				'catalog': 'Views:Pages:Catalog',
+				'catalog/:id': 'Views:Pages:Catalog'
 			},
 			routes: [
 				/^[A-Za-z0-9\/_-]{0,24}$/
-			]
+			],
+			pushState: false
 		});
 
 		app.Views.configure({

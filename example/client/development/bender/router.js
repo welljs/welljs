@@ -35,6 +35,7 @@ benderDefine('Bender:Router', function (app) {
 			if (!config.actions['not-found'])
 				config.actions['not-found'] = 'Bender:Public:NotFound';
 			this.config = config;
+			this.config.pushState = config.pushState || false;
 			this.defineRoutes(config.routes);
 			this.beforeStart = config.beforeStart || function(){};
 //			this.start();
@@ -43,7 +44,7 @@ benderDefine('Bender:Router', function (app) {
 
 		start: function () {
 			_.isFunction(this.beforeStart) && this.beforeStart();
-			Backbone.history.start();
+			Backbone.history.start({pushState: this.config.pushState});
 		},
 
 		onPagesLoaded: function () {
