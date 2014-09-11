@@ -120,6 +120,8 @@ benderDefine('Bender:Views', function (app) {
 						self.waitOnQueueComplete(modules, function () {
 							self.tryToRender(action, params);
 						});
+					}, function () {
+						app.Router.go404();
 					});
 				}
 
