@@ -97,10 +97,6 @@
 
 		getFileName: function (modName) {
 			return /:([^:]+)$/.exec(modName)[1];
-		},
-
-		getDefaultsPath: function () {
-			return '/bender/public/'
 		}
 	});
 

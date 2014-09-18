@@ -128,6 +128,7 @@
 		this.modules = {};
 		this.init();
 	};
+
 	_.extend(Controller.prototype, {
 		get: function (name) {
 			return this.modules[name].implementation;
