@@ -2,7 +2,7 @@
 benderDefine('Bender:Public:About', function () {
 	this.use('Bender:Public:Layout');
 	this.configure({
-		template: 'Bender:Public:About',
+		template: 'Bender:Bender:Public:About',
 		layout: 'Bender:Public:Layout',
 		route: '/',
 		type: 'view',

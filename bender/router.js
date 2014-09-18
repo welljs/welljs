@@ -3,6 +3,10 @@ benderDefine('Bender:Router', function (app) {
 		currentPage: null,
 		initialize: function (options) {
 			this.config = {};
+			Handlebars.registerHelper('url', function (route) {
+				return '/#' + route;
+			});
+
 		},
 
 		defineRoutes: function (routes) {
@@ -31,6 +35,10 @@ benderDefine('Bender:Router', function (app) {
 			Backbone.history.navigate(url, {trigger: true});
 		},
 
+		go404: function () {
+			this.go('/' + this.get404Args().route);
+		},
+
 		configure: function (config) {
 			if (!config.actions['not-found'])
 				config.actions['not-found'] = 'Bender:Public:NotFound';
@@ -48,10 +56,19 @@ benderDefine('Bender:Router', function (app) {
 
 		getRouteAction: function (route) {
 			var mod = this.config.actions[route];
+			return mod
+				? {
+						module: mod,
+						route: route
+					}
+				: this.get404Args()
+		},
+
+		get404Args: function () {
 			return {
-					module: mod || 'Bender:Public:NotFound',
-					route: mod ? route : 'not-found'
-				};
+				module: 'Bender:Public:NotFound',
+				route: 'not-found'
+			};
 		},
 
 		parseUrl: function (url) {
