@@ -150,16 +150,18 @@
 		require: function (modules, next, err) {
 			var missing = this.findMissing(modules);
 			//если модули уже загружены - вызов
-			if (_.isEmpty(missing)) {
+			if (_.isEmpty(missing))
 				return next(this.pack(modules));
-			}
+
 			new Queue(_.clone(missing), next, this);
-			missing = _.map(missing, function (moduleName) {
-				return app.transformToPath(moduleName);
-			}, this);
-			//requirejs call
-			if (!app.isProduction)
+
+			if (!app.isProduction) {
+				missing = _.map(missing, function (moduleName) {
+					return app.transformToPath(moduleName);
+				}, this);
+				//requirejs call
 				require(missing, function(){}, err);
+			}
 			return this;
 		},
 

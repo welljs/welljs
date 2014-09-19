@@ -37,28 +37,38 @@
 
 		loadCore: function () {
 			var options = this.options;
+			var self = this;
 			this.Modules.require(
 				[
 					options.templates,
 					options.views,
 					options.router,
-					options.strategy,
+//					options.strategy,
 					options.models,
 					options.collections
 				],
-				this.onCoreLoaded.bind(this),
-				this.onCoreLoadError.bind(this)
-			);
+				function () {
+					self.onCoreLoaded.call(self);
+				},
+				function () {
+					self.onCoreLoadError.call(self);
+				});
 		},
 
 		onCoreLoaded: function () {
 			var Modules = this.Modules;
+			var self = this;
 			this.Models = new (Modules.get(this.options.models));
 			this.Collections = new (Modules.get(this.options.collections));
 			this.Router = new(Modules.get(this.options.router));
 			this.Templates = new (Modules.get(this.options.templates));
 			this.Views = new (Modules.get(this.options.views));
-			this.Strategy = new(Modules.get(this.options.strategy));
+			this.Modules.require([this.options.strategy], function () {
+				self.Strategy = new(Modules.get(self.options.strategy));
+			},
+			function () {
+				self.onCoreLoadError.call(self);
+			});
 			return this;
 		},
 
