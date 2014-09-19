@@ -1,19 +1,17 @@
 (function () {
 	'use strict';
 	var App = function (options) {
-		var opts = this.options = options || {};
-		var defs = this.defaults = {
+		this.isProduction = options.isProduction;
+		this.defaults = {
 			strategy: 'Bender:Public:Strategy',
-			router: 'Bender:Router'
+			router: 'Plugins:Bender:Router',
+			templates: 'Plugins:Bender:Templates',
+			views: 'Plugins:Bender:Views',
+			models: 'Plugins:Bender:Models',
+			collections: 'Plugins:Bender:Collections'
 		};
-
-		if (!window.ENV)
-			window.ENV = 'development';
-
-		this.isProduction = (ENV && ENV === 'production');
+		this.options = _.extend(this.defaults, options);
 		this.Events = _.extend(Backbone.Events, {});
-		this.options.router = this.transformToName(opts.router) || defs.router;
-		this.options.strategy = this.transformToName(opts.strategy) || defs.strategy;
 		this.init();
 	};
 
@@ -22,7 +20,8 @@
 			requirejs.config({
 				baseUrl: this.options.appRoot,
 				paths: {
-					bender: this.options.benderRoot
+					bender: this.options.benderRoot,
+					plugins: this.options.pluginsRoot
 				}
 			});
 			return this;
@@ -30,18 +29,21 @@
 
 		init: function () {
 			this.Modules = new BenderModuleController(this);
-			this.requireConfig();
+			if (!this.isProduction)
+				this.requireConfig();
 			this.loadCore();
 		},
 
 		loadCore: function () {
+			var options = this.options;
 			this.Modules.require(
 				[
-					'Bender:Models',
-					'Bender:Templates',
-					'Bender:Views',
-					this.options.router,
-					this.options.strategy
+					options.templates,
+					options.views,
+					options.router,
+					options.strategy,
+					options.models,
+					options.collections
 				],
 				this.onCoreLoaded.bind(this),
 				this.onCoreLoadError.bind(this)
@@ -50,10 +52,11 @@
 
 		onCoreLoaded: function () {
 			var Modules = this.Modules;
-			this.Models = new (Modules.get('Bender:Models'));
-			this.Router = new(Modules.get('Bender:Router'));
-			this.Templates = new (Modules.get('Bender:Templates'));
-			this.Views = new (Modules.get('Bender:Views'));
+			this.Models = new (Modules.get(this.options.models));
+			this.Collections = new (Modules.get(this.options.collections));
+			this.Router = new(Modules.get(this.options.router));
+			this.Templates = new (Modules.get(this.options.templates));
+			this.Views = new (Modules.get(this.options.views));
 			this.Strategy = new(Modules.get(this.options.strategy));
 			return this;
 		},
@@ -65,8 +68,7 @@
 			}
 			else {
 				console.log('Defaults will be loaded');
-				this.options.strategy = this.defaults.strategy;
-				this.options.router = this.defaults.router;
+				this.options = this.defaults;
 				this.loadCore();
 				this.reloaded = true;
 			}
@@ -100,5 +102,5 @@
 		}
 	});
 
-	window.Bender = App;
+	window.Bender = new App(window.BenderConfig || {});
 })();

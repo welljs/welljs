@@ -171,7 +171,8 @@
 				return app.transformToPath(moduleName);
 			}, this);
 			//requirejs call
-			require(missing, function(){}, err);
+			if (!app.isProduction)
+				require(missing, function(){}, err);
 			return this;
 		},
 
