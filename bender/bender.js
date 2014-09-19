@@ -18,6 +18,7 @@
 	_.extend(App.prototype,{
 		requireConfig: function () {
 			requirejs.config({
+				waitSeconds: 60,
 				baseUrl: this.options.appRoot,
 				paths: {
 					bender: this.options.benderRoot,
@@ -68,7 +69,7 @@
 			}
 			else {
 				console.log('Defaults will be loaded');
-				this.options = this.defaults;
+				this.options = (this.defaults.strategy = 'Bender:Public:Strategy');
 				this.loadCore();
 				this.reloaded = true;
 			}

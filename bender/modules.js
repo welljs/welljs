@@ -51,26 +51,13 @@
 		},
 
 		waitForDeps: function (next) {
-			var deps = _.clone(this.controller.findMissing(this.deps));
-			var self = this;
-
-			//тут ожидается define всех зависимостей
-			function handle(module) {
-				var index = self.deps.indexOf(module.name);
-				if (index === -1) return;
-				deps.splice(index, 1);
-				if (_.isEmpty(deps)) {
-					app.Events.off('MODULE_DEFINED', handle, this);
-					next(self);
-				}
-
-			}
 			// на продакше модули собраны в один файл.
 			// их не надо подгружать, нужно просто дождаться пока определятся нужные
 			if (app.isProduction) {
-				app.Events.on('MODULE_DEFINED', handle, this);
+				next(this);
 			}
 			else {
+				var deps = _.clone(this.controller.findMissing(this.deps));
 				//на девелопменте разобраны по файлам и их надо подгружать
 				app.Modules.require(this.deps, function () {
 					next(this);
