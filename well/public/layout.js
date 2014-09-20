@@ -1,8 +1,8 @@
 //если в пользовательском приложении лэйаут не указан, будет использоваться этот
-benderDefine('Bender:Public:Layout', function () {
+wellDefine('Well:Public:Layout', function () {
 	this.configure({
 		type: 'view',
-		template: 'Bender:Bender:Public:Layout',
+		template: 'Well:Well:Public:Layout',
 		isDefault: true
 	});
 	return function () {

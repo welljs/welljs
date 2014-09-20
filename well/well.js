@@ -3,12 +3,12 @@
 	var App = function (options) {
 		this.isProduction = options.isProduction;
 		this.defaults = {
-			strategy: 'Bender:Public:Strategy',
-			router: 'Plugins:Bender:Router',
-			templates: 'Plugins:Bender:Templates',
-			views: 'Plugins:Bender:Views',
-			models: 'Plugins:Bender:Models',
-			collections: 'Plugins:Bender:Collections'
+			strategy: 'Well:Public:Strategy',
+			router: 'Plugins:Well:Router',
+			templates: 'Plugins:Well:Templates',
+			views: 'Plugins:Well:Views',
+			models: 'Plugins:Well:Models',
+			collections: 'Plugins:Well:Collections'
 		};
 		this.options = _.extend(this.defaults, options);
 		this.Events = _.extend(Backbone.Events, {});
@@ -21,7 +21,7 @@
 				waitSeconds: 60,
 				baseUrl: this.options.appRoot,
 				paths: {
-					bender: this.options.benderRoot,
+					well: this.options.wellRoot,
 					plugins: this.options.pluginsRoot
 				}
 			});
@@ -29,7 +29,7 @@
 		},
 
 		init: function () {
-			this.Modules = new BenderModuleController(this);
+			this.Modules = new WellModuleController(this);
 			if (!this.isProduction)
 				this.requireConfig();
 			this.loadCore();
@@ -43,7 +43,6 @@
 					options.templates,
 					options.views,
 					options.router,
-//					options.strategy,
 					options.models,
 					options.collections
 				],
@@ -75,11 +74,11 @@
 		onCoreLoadError: function (err) {
 			console.log(err.message);
 			if (this.reloaded) {
-				console.log('Error in project loading! Cant find Benderjs root');
+				console.log('Error in project loading! Cant find Welljs root');
 			}
 			else {
 				console.log('Defaults will be loaded');
-				this.options = (this.defaults.strategy = 'Bender:Public:Strategy');
+				this.options = (this.defaults.strategy = 'Well:Public:Strategy');
 				this.loadCore();
 				this.reloaded = true;
 			}
@@ -113,5 +112,5 @@
 		}
 	});
 
-	window.Bender = new App(window.BenderConfig || {});
+	window.Well = new App(window.WellConfig || {});
 })();

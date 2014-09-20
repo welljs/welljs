@@ -1,10 +1,9 @@
 //страница 404 по-умолчанию, если не найдена пользовательская
-benderDefine('Bender:Public:NotFound', function () {
-	this.use('Bender:Public:Layout');
-//	this.use('Bender:Public:Layout');
+wellDefine('Well:Public:NotFound', function () {
+	this.use('Well:Public:Layout');
 	this.configure({
-		template: 'Bender:Bender:Public:NotFound',
-		layout: 'Bender:Public:Layout',
+		template: 'Well:Well:Public:NotFound',
+		layout: 'Well:Public:Layout',
 		type: 'view',
 		isDefault: true
 	});

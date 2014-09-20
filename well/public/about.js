@@ -1,9 +1,9 @@
 //страница по-умолчанию, если приложение не создано или не найдено
-benderDefine('Bender:Public:About', function () {
-	this.use('Bender:Public:Layout');
+wellDefine('Well:Public:About', function () {
+	this.use('Well:Public:Layout');
 	this.configure({
-		template: 'Bender:Bender:Public:About',
-		layout: 'Bender:Public:Layout',
+		template: 'Well:Well:Public:About',
+		layout: 'Well:Public:Layout',
 		route: '/',
 		type: 'view',
 		isDefault: true

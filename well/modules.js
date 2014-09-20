@@ -44,7 +44,7 @@
 				case 'model': this.isModel = true; break;
 				case 'collection': this.isCollection = true; break;
 				case 'plugin': this.isPlugin = true; break;
-				case 'bender': this.isCore = true; break;
+				case 'well': this.isCore = true; break;
 			}
 			this.config['type'] = type;
 			return this;
@@ -135,7 +135,7 @@
 		},
 
 		init: function () {
-			window.benderDefine = this.define.bind(this);
+			window.wellDefine = this.define.bind(this);
 			return this;
 		},
 
@@ -195,5 +195,5 @@
 			return res;
 		}
 	});
-	window.BenderModuleController = Controller;
+	window.WellModuleController = Controller;
 })();

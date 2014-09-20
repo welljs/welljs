@@ -1,11 +1,9 @@
-benderDefine('Bender:Public:Strategy', function (app) {
+wellDefine('Well:Public:Strategy', function (app) {
 	return function () {
-		//это должно конфигурироваться до загрузки модулей
-
 		app.Router.configure({
 			actions: {
-				'/': 'Bender:Public:About',
-				'not-found': 'Bender:Public:NotFound'
+				'/': 'Well:Public:About',
+				'not-found': 'Well:Public:NotFound'
 			},
 			routes: [
 				/^[A-Za-z0-9\/_-]{0,24}$/
