@@ -1,9 +1,8 @@
 //страница 404 по-умолчанию, если не найдена пользовательская
-wellDefine('Well:Public:NotFound', function () {
-	this.use('Well:Public:Layout');
+wellDefine('Well:Defaults:NotFound', function () {
+	this.use(':Layout');
 	this.configure({
-		template: 'Well:Well:Public:NotFound',
-		layout: 'Well:Public:Layout',
+		template: ':NotFound',
 		type: 'view',
 		isDefault: true
 	});

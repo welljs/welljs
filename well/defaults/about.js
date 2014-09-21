@@ -1,10 +1,7 @@
 //страница по-умолчанию, если приложение не создано или не найдено
-wellDefine('Well:Public:About', function () {
-	this.use('Well:Public:Layout');
+wellDefine('Well:Defaults:About', function () {
 	this.configure({
-		template: 'Well:Well:Public:About',
-		layout: 'Well:Public:Layout',
-		route: '/',
+		template: ':About',
 		type: 'view',
 		isDefault: true
 	});

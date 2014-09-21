@@ -1,8 +1,8 @@
 //если в пользовательском приложении лэйаут не указан, будет использоваться этот
-wellDefine('Well:Public:Layout', function () {
+wellDefine('Well:Defaults:Layout', function () {
 	this.configure({
 		type: 'view',
-		template: 'Well:Well:Public:Layout',
+		template: ':Layout',
 		isDefault: true
 	});
 	return function () {

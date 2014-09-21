@@ -1,9 +1,9 @@
-wellDefine('Well:Public:Strategy', function (app) {
+wellDefine('Well:Defaults:Strategy', function (app) {
 	return function () {
 		app.Router.configure({
 			actions: {
-				'/': 'Well:Public:About',
-				'not-found': 'Well:Public:NotFound'
+				'/': 'Well:Defaults:About',
+				'not-found': 'Well:Defaults:NotFound'
 			},
 			routes: [
 				/^[A-Za-z0-9\/_-]{0,24}$/
@@ -12,8 +12,9 @@ wellDefine('Well:Public:Strategy', function (app) {
 
 		app.Views.configure({
 			layoutHolder: 'body',
-			templates: '/',
-			html: true
+			notFoundModule: ':NotFound',
+			layoutModule: ':Main',
+			html: '/'
 		});
 
 		//роутер конфигурируется в конце, либо убрать из него хистори старт
