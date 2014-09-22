@@ -1,0 +1,26 @@
+{
+	"name": "Well.js",
+	"version": "0.1-beta",
+	"description": "Boilerplate for Javascript applications, with lazy loading Asynchronous Module Definition (AMD)",
+	"main": ["src/modules.js", "src/well.js"],
+	"keywords": [
+		"CMD",
+		"AMD",
+		"CommonJS",
+		"module",
+		"loader",
+		"applications",
+		"boilerplate",
+		"chainable",
+		"lazyloading",
+		"scripts",
+		"require"
+	],
+	"authors": [
+		"Vitalii Vorobioff <vitalii.vorobioff@gmail.com>"
+	],
+	"license": "MIT",
+	"ignore": [
+		"**/.*"
+	]
+}
