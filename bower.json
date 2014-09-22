@@ -2,7 +2,7 @@
 	"name": "Well",
 	"version": "0.0.45",
 	"description": "Boilerplate for Javascript applications, with lazy loading Asynchronous Module Definition (AMD)",
-	"main": ["src/modules.js", "src/well.js"],
+	"main": ["well"],
 	"keywords": [
 		"CMD",
 		"AMD",
