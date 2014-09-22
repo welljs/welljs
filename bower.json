@@ -24,10 +24,12 @@
 		"/example"
 	],
 	"dependencies" : {
-		"jquery": ">=1.7",
-		"underscore": ">=1.7",
-		"backbone": ">=1.1.2",
-		"handlebars" : ">=1.3.0"
+		"xxx" : {
+			"jquery": ">=1.7",
+			"underscore": ">=1.7",
+			"backbone": ">=1.1.2",
+			"handlebars" : ">=1.3.0"
+		}
 	},
 	"repository": {
 		"type": "git",
