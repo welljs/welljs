@@ -1,4 +1,4 @@
-benderjs
+Welljs
 ========
 
-A small JavaScript framework with AMD aproach
+A small boilerplate for Javascript applications, with lazy loading and Asynchronous Module Definition (AMD)
