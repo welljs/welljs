@@ -1,4 +1,4 @@
-benderDefine('Plugins:Bender:Models', function (app) {
+wellDefine('Plugins:Well:Models', function (app) {
 	return function () {
 		var Controller = function () {};
 		_.extend(Controller.prototype, {

@@ -1,4 +1,4 @@
-benderDefine('Plugins:Bender:Views', function (app) {
+wellDefine('Plugins:Well:Views', function (app) {
 	return function(){
 		var Controller = function () {
 			app.Events.on('ROUTER_PAGE_CHANGED', this.tryToRender, this);
@@ -126,16 +126,16 @@ benderDefine('Plugins:Bender:Views', function (app) {
 				this.showOverlay();
 
 				if (_.isString(action)) {
-					layoutName = this.getConfigParam('layoutModule') || 'Bender:Public:Layout';
+					layoutName = this.getConfigParam('layoutModule') || 'Well:Defaults:Layout';
 					pageName = action;
 				}
 				//не определена рутером
 				else if (!action) {
-					layoutName = this.getConfigParam('layoutModule') || 'Bender:Public:Layout';
-					pageName = this.getConfigParam('notFoundModule') || 'Bender:Public:NotFound';
+					layoutName = this.getConfigParam('layoutModule') || 'Well:Defaults:Layout';
+					pageName = this.getConfigParam('notFoundModule') || 'Well:Defaults:NotFound';
 				}
 				else {
-					layoutName = action.layout || 'Bender:Public:Layout';
+					layoutName = action.layout || 'Well:Defaults:Layout';
 					pageName = action.page;
 				}
 
@@ -163,10 +163,10 @@ benderDefine('Plugins:Bender:Views', function (app) {
 							self.tryToRender(action, params);
 						});
 					}, function () {
-						if (!self.getModule('Bender:Public:NotFound')) {
-							return app.Modules.require(['Bender:Public:NotFound'], function (modules, queue) {
+						if (!self.getModule('Well:Defaults:NotFound')) {
+							return app.Modules.require(['Well:Defaults:NotFound'], function (modules, queue) {
 								self.waitOnQueueComplete(modules, function () {
-									self.tryToRender('Bender:Public:NotFound', params);
+									self.tryToRender('Well:Defaults:NotFound', params);
 								});
 							});
 						}

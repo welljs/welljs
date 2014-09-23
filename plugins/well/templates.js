@@ -1,4 +1,4 @@
-benderDefine('Plugins:Bender:Templates', function (app) {
+wellDefine('Plugins:Well:Templates', function (app) {
 	return function () {
 		//template api
 		function create (opts) {

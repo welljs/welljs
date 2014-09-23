@@ -1,4 +1,4 @@
-benderDefine('Plugins:Bender:Router', function (app) {
+wellDefine('Plugins:Well:Router', function (app) {
 	return Backbone.Router.extend({
 		currentPage: null,
 		initialize: function (options) {
