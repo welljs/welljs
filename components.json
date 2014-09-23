@@ -1,0 +1,42 @@
+{
+	"name": "Well",
+	"version": "0.0.45",
+	"description": "Boilerplate for Javascript applications, with lazy loading Asynchronous Module Definition (AMD)",
+	"main": ["well"],
+	"keywords": [
+		"CMD",
+		"AMD",
+		"CommonJS",
+		"module",
+		"loader",
+		"applications",
+		"boilerplate",
+		"chainable",
+		"lazyloading",
+		"scripts",
+		"require"
+	],
+	"authors": [
+		"Vitalii Vorobioff <vitalii.vorobioff@gmail.com>"
+	],
+	"license": "MIT",
+	"ignore": [
+		"/example"
+	],
+	"dependencies" : {
+			"jquery": ">=1.7",
+			"underscore": ">=1.7",
+			"backbone": ">=1.1.2",
+			"handlebars" : ">=1.3.0"
+	},
+	"install": {
+		"path": "/",
+		"sources" :{
+			"well" : "well/**",
+			"vendor": ["!well/**"]
+		}	
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/welljs/welljs.git"
+	}}
