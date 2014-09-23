@@ -30,7 +30,7 @@
 			"handlebars" : ">=1.3.0"
 	},
 	"devDependencies": {
-		"well": "0.0.45",
+		"well": "0.0.45"
 	},
 	"repository": {
 		"type": "git",
