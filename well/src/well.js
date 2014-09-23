@@ -3,7 +3,7 @@
 	var App = function (options) {
 		this.isProduction = options.isProduction;
 		this.defaults = {
-			strategy: 'Well:Public:Strategy',
+			strategy: 'Well:Defaults:Strategy',
 			router: 'Plugins:Well:Router',
 			templates: 'Plugins:Well:Templates',
 			views: 'Plugins:Well:Views',
@@ -65,8 +65,8 @@
 			this.Modules.require([this.options.strategy], function () {
 				self.Strategy = new(Modules.get(self.options.strategy));
 			},
-			function () {
-				self.onCoreLoadError.call(self);
+			function (err) {
+				self.onCoreLoadError.call(self, err);
 			});
 			return this;
 		},
@@ -78,7 +78,7 @@
 			}
 			else {
 				console.log('Defaults will be loaded');
-				this.options = (this.defaults.strategy = 'Well:Public:Strategy');
+				this.options.strategy = (this.defaults.strategy = 'Well:Defaults:Strategy');
 				this.loadCore();
 				this.reloaded = true;
 			}

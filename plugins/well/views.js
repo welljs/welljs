@@ -198,7 +198,7 @@ wellDefine('Plugins:Well:Views', function (app) {
 				if (this.isCurrentLayout(module.name))
 					return this.currentLayout.view;
 				this.currentLayout = module;
-				module.el = $(this.config.layoutHolder);
+				module.el = $(this.config.layoutHolder || 'body');
 				return this.currentLayout.view = this.render(module, params);
 			},
 
