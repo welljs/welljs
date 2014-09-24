@@ -18,6 +18,7 @@
 	_.extend(App.prototype,{
 		requireConfig: function () {
 			requirejs.config({
+				urlArgs: this.options.cache === false ? (new Date()).getTime() :  '',
 				waitSeconds: 60,
 				baseUrl: this.options.appRoot,
 				paths: {
