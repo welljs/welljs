@@ -12,6 +12,7 @@
 		};
 		this.options = _.extend(this.defaults, options);
 		this.Events = _.extend(Backbone.Events, {});
+		window[this.options.appName || 'Well'] = this;
 		this.init();
 	};
 
@@ -113,5 +114,5 @@
 		}
 	});
 
-	window.Well = new App(window.WellConfig || {});
+	new App(window.WellConfig || {});
 })();
