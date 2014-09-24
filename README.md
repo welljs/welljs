@@ -1,7 +1,7 @@
 <h1>Welljs</h1>
 ========
 
-<span style="color: red;">A small boilerplate for Javascript applications, with lazy loading and Asynchronous Module Definition (AMD)</span>
+Это небольшой фреймворк-надостройка над AMD решениями (в данной версии пока только Require.js)
 
 ```javascript
 wellDefine('Views:Pages:About', function(app) {
