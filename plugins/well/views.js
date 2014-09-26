@@ -134,6 +134,10 @@ wellDefine('Plugins:Well:Views', function (app) {
 					layoutName = this.getConfigParam('layoutModule') || 'Well:Defaults:Layout';
 					pageName = this.getConfigParam('notFoundModule') || 'Well:Defaults:NotFound';
 				}
+				else if (!action.page && action.layout) {
+					layoutName = action.layout
+					pageName = this.getConfigParam('notFoundModule') || 'Well:Defaults:NotFound';
+				}
 				else {
 					layoutName = action.layout || 'Well:Defaults:Layout';
 					pageName = action.page;
@@ -182,9 +186,11 @@ wellDefine('Plugins:Well:Views', function (app) {
 				}
 
 				//когда загружены все данные, можно отрендерить лэйаут и страницу
+				app.Events.trigger('BEFORE_PAGE_RENDERED', {page: page, layout: layout});
 				this.renderLayout(layout, params);
 				this.renderPage(page, params);
 				this.hideOverlay();
+				app.Events.trigger('PAGE_RENDERED', {page: page, layout: layout});
 				return this;
 			},
 

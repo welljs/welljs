@@ -4,6 +4,8 @@ wellDefine('Plugins:Well:Router', function (app) {
 		initialize: function (options) {
 			this.config = {};
 			Handlebars.registerHelper('url', function (route) {
+				if (route === '/')
+					route = '';
 				return '/#' + route;
 			});
 
@@ -27,11 +29,14 @@ wellDefine('Plugins:Well:Router', function (app) {
 
 		proxy: function () {
 			var args = this.parseUrl(Backbone.history.fragment);
-			this.currentPage = args.route === '/' ? '' : args.route;
+			this.currentPage = args.route === '/' ? '' :  args.route;
 			app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(args.route), args.params);
+			this.customLayout = null;
 		},
 
-		go: function (url) {
+		go: function (url, options) {
+			if (options)
+				this.customLayout = options.layout;
 			Backbone.history.navigate(url, {trigger: true});
 		},
 
@@ -49,13 +54,23 @@ wellDefine('Plugins:Well:Router', function (app) {
 		},
 
 		getRouteAction: function (route) {
-			return this.config.actions[route];
+			var action = this.config.actions[route];
+
+			if (!this.customLayout)
+				return action;
+
+			return _.isObject(action)
+				? (action['layout'] = this.customLayout)
+				: {
+						page: action,
+						layout: this.customLayout
+					}
 		},
 
 		parseUrl: function (url) {
 			var args = url.split('/');
 			return {
-				route: args[0] || '/',
+				route: args[0] ? '/' + args[0] : '/',
 				params: args[1] || ''
 			};
 		}
