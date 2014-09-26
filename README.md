@@ -19,16 +19,6 @@ wellDefine('Views:Pages:AboutWell', function(app) {
 ```
 Для удобства чтения и понимания структуры проекта, наименования модулей в Welljs соответствуют их путям. Т.е. `'Views:Pages:AboutWell'` хранится в `views/pages/about-well.js`. 
 
-Корневые директории прописываются в WellConfig
-```javascript
-window.WellConfig = {
-	strategy: 'MyStrategy',
-	appRoot: '/app',
-	wellRoot: '/well',
-	pluginsRoot: '/plugins'
-};
-```
-
 Если у модуля есть зависимости, они указываются через `this.use('Path:To:DependencyModule')`. Если зависимый модуль находится в той же директории что и исходный, то его можно указать кратко: `this.use(':DependencyModule')` 
 
 ###Применение
