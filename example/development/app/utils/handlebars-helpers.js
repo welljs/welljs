@@ -5,5 +5,8 @@ wellDefine('Utils:HandlebarsHelpers', function (app) {
 				route = '';
 			return '/#' + route;
 		});
+		Handlebars.registerHelper('copyright', function () {
+			return '©' + new Date().getFullYear();
+		});
 	};
 });
