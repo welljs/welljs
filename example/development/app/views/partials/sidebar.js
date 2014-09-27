@@ -1,4 +1,4 @@
-wellDefine('Views:Parts:Sidebar', function (app) {
+wellDefine('Views:Partials:Sidebar', function (app) {
 	this.use('Views:Common:Base');
 	return function () {
 		return app.Views.get('Views:Common:Base').extend({
