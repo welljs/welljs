@@ -1,3 +1,5 @@
 example
 .idea
 vendors
+server/node_modules
+node_modules
