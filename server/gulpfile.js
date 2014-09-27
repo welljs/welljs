@@ -11,7 +11,7 @@ var prodJs = prod + 'js/';
 var prodHbs = prod + 'handlebars/';
 
 function vendors(libs) {
-	var path = dev + '/bender/bender/vendors/';
+	var path = dev + '/well/well/vendors/';
 	return  _.map(libs, function (lib) {
 		return path + lib + '.js';
 	});
@@ -24,10 +24,10 @@ gulp.task('vendors', function () {
 		.pipe(gulp.dest(prodJs));
 });
 
-var bdr = dev + '/bender/bender';
-gulp.task('bender', function () {
-	gulp.src([bdr + '/modules.js', bdr + '/bender.js'])
-		.pipe(concat('bender.min.js'))
+var bdr = dev + '/well/well/src';
+gulp.task('well', function () {
+	gulp.src([bdr + '/modules.js', bdr + '/well.js'])
+		.pipe(concat('well.min.js'))
 //		.pipe(uglify())
 		.pipe(gulp.dest(prodJs));
 });
@@ -48,15 +48,13 @@ gulp.task('templates', function () {
 });
 
 gulp.task('app', function () {
-	gulp.src(['!'+dev + '/e-store/my-strategy.js', dev + '/e-store/**/*.js'])
+	gulp.src([
+			dev + '/e-store/**/!(my-strategy)*.js',
+			dev + '/e-store/my-strategy.js'
+	])
 		.pipe(concat('app.min.js'))
+//		.pipe(uglify())
 		.pipe(gulp.dest(prodJs));
 });
 
-gulp.task('strategy', function () {
-	gulp.src([prodJs + 'app.min.js', dev + '/e-store/my-strategy.js'])
-		.pipe(concat('app.min.js'))
-		.pipe(gulp.dest(prodJs));
-});
-
-gulp.task('default', ['vendors', 'bender', 'plugins', 'templates', 'app', 'strategy'], function () {});
+gulp.task('default', ['vendors', 'well', 'plugins', 'templates', 'app'], function () {});

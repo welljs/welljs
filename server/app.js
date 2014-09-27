@@ -6,20 +6,18 @@ var app = express();
 app.use(require('body-parser')()); // стандартный модуль, для парсинга JSON в запросах
 app.use(require('method-override')()); // поддержка put и delete
 
-var env = 'development';
-//var env = 'production';
-app.use(express.static(path.join(__dirname, '../example/'+ env + '/'), {hidden : true}));
+function createServer(name, port, currentEnv) {
+	var env = {
+		production: 'production',
+		development: 'development'
+	}[currentEnv] || '';
 
-app.set('view engine', 'jade');
-app.set('views', __dirname);
-app.get('/', function (req, res) {
-	res.render('views/index.jade', {
-		production: env === 'production'
+	app.use(express.static(path.join(__dirname, '../' + name + '/' + env + '/'), {hidden : true}));
+	app.set('port', port);
+	http.createServer(app).listen(app.get('port'), '127.0.0.1', function(){
+		console.log('Express server listening on port ' + port);
+		console.log('current environment: ', env);
 	});
-});
+}
 
-var port = 3002;
-app.set('port', port); // порт настроен на сервер
-http.createServer(app).listen(app.get('port'), '127.0.0.1', function(){
-	console.log('Express server listening on port ' + port);
-});
+createServer('example', 3002, 'development');
