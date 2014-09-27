@@ -7,6 +7,6 @@
 		"jquery": "latest",
 		"underscore": "latest",
 		"backbone": "latest",
-		"handlebars" : "latest"
+		"handlebars-v-1-3" : "*"
 	}
 }
