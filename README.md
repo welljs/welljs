@@ -19,6 +19,16 @@ wellDefine('Views:Pages:AboutWell', function(app) {
 ```
 Для удобства чтения и понимания структуры проекта, наименования модулей в Welljs соответствуют их путям. Т.е. `'Views:Pages:AboutWell'` хранится в `views/pages/about-well.js`. 
 
+Корневые директории прописываются в WellConfig
+```javascript
+window.WellConfig = {
+	strategy: 'MyStrategy',
+	appRoot: '/app',
+	wellRoot: '/well',
+	pluginsRoot: '/plugins'
+};
+```
+
 Если у модуля есть зависимости, они указываются через `this.use('Path:To:DependencyModule')`. Если зависимый модуль находится в той же директории что и исходный, то его можно указать кратко: `this.use(':DependencyModule')` 
 
 ###Применение
@@ -56,6 +66,16 @@ var myModule = new MyModule({option: 'some option'});
 ###Plugins
 
 Well предоставляет возможность писать независимые плагины и использовать их в разных приложениях. Так же обмениваться ими, через пакетный менеджер bower
+
+###Installation
+
+1) Склонировать репозиторий
+
+`git clone https://github.com/welljs/welljs.git`
+
+2) Установить зависимости командой
+
+`bower install`
 
 
 Ссылка на подробную документацию к проекту
