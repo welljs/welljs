@@ -20,7 +20,7 @@
 		"Vitalii Vorobioff <vitalii.vorobioff@gmail.com>"
 	],
 	"license": "MIT",
-	"ignore": [".git", ".idea"],
+	"ignore": [".git", ".idea", "server/node_modules"],
 	"dependencies" : {
 			"jquery": ">=1.7",
 			"underscore": ">=1.7",
