@@ -3,12 +3,6 @@ wellDefine('Plugins:Well:Router', function (app) {
 		currentPage: null,
 		initialize: function (options) {
 			this.config = {};
-			Handlebars.registerHelper('url', function (route) {
-				if (route === '/')
-					route = '';
-				return '/#' + route;
-			});
-
 		},
 
 		defineRoutes: function (routes) {
@@ -30,7 +24,7 @@ wellDefine('Plugins:Well:Router', function (app) {
 		proxy: function () {
 			var args = this.parseUrl(Backbone.history.fragment);
 			this.currentPage = args.route === '/' ? '' :  args.route;
-			app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(args.route), args.params);
+			app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(args.route), {route: args.route, params: args.params});
 			this.customLayout = null;
 		},
 

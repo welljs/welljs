@@ -139,7 +139,7 @@ wellDefine('Plugins:Well:Views', function (app) {
 					pageName = this.getConfigParam('notFoundModule') || 'Well:Defaults:NotFound';
 				}
 				else {
-					layoutName = action.layout || 'Well:Defaults:Layout';
+					layoutName = action.layout || this.getConfigParam('layoutModule') || 'Well:Defaults:Layout';
 					pageName = action.page;
 				}
 
@@ -186,11 +186,11 @@ wellDefine('Plugins:Well:Views', function (app) {
 				}
 
 				//когда загружены все данные, можно отрендерить лэйаут и страницу
-				app.Events.trigger('BEFORE_PAGE_RENDERED', {page: page, layout: layout});
+				app.Events.trigger('BEFORE_PAGE_RENDERED', {page: page, layout: layout, params: params});
 				this.renderLayout(layout, params);
 				this.renderPage(page, params);
 				this.hideOverlay();
-				app.Events.trigger('PAGE_RENDERED', {page: page, layout: layout});
+				app.Events.trigger('PAGE_RENDERED', {page: page, layout: layout, params: params});
 				return this;
 			},
 
@@ -225,10 +225,13 @@ wellDefine('Plugins:Well:Views', function (app) {
 				return view;
 			},
 
-			initialize: function (module, options) {
-				_.isString(module) && (module = this.getModule(module));
+			initialize: function (requiredMod, options) {
+				var module = _.isString(requiredMod)
+					? this.getModule(requiredMod)
+					: requiredMod;
 				if (!module)
-					throw 'View module not found';
+					throw 'View module ' + requiredMod +' not found';
+
 				var template = this.getTemplate(module);
 				var viewName = module.name;
 				var view = this.initialized[viewName] = new (this.get(viewName))(_.extend({
