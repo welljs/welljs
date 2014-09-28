@@ -1,4 +1,4 @@
-__Welljs__ - это небольшой фреймворк предназначенный для построения javascript-приложений. В качестве AMD-решения Well использует [Require.js](http://requirejs.org/)
+__Welljs__ - это, основанный на AMD (Asynchronous Module Definition), JavaScript-фреймворк предназначенный для развертывания и масштабирования клиентских приложений. Ключевая особенность - систематизированная работа с модулями и их зависимостями. В качестве AMD-движка Well использует [Require.js](http://requirejs.org/), но позволяет легко заменить его на любой другой.
 
 Так выглядит модуль  Well:
 
@@ -24,30 +24,24 @@ wellDefine('Views:Pages:AboutWell', function(app) {
   });
 });
 ```
-Для удобства чтения и понимания структуры проекта, наименования модулей в Welljs соответствуют их путям. Т.е. `'Views:Pages:AboutWell'` хранится в `views/pages/about-well.js`. 
+Для удобного ориентирования, наименования модулей в Welljs соответствуют их путям. Т.е. `'Views:Pages:AboutWell'` хранится в `views/pages/about-well.js`. 
 
-Корневые директории прописываются в WellConfig
-```javascript
-window.WellConfig = {
-	strategy: 'MyStrategy',
-	appRoot: '/app',
-	wellRoot: '/well',
-	pluginsRoot: '/plugins'
-};
-```
 
 Если у модуля есть зависимости, они указываются через `this.use('Path:To:DependencyModule')`. Если зависимый модуль находится в той же директории что и исходный, то его можно указать кратко: `this.use(':DependencyModule')` 
 
 ###Применение
 Модули загружаются следующим образом:
 ```javascript
+// app - неймспес приложения. доступен везде
+// Modules - контроллер модулей
 app.Modules.require([
     'Full:ModuleName:Foo', 
     'Full:ModuleName:Bar', 
     'Full:ModuleName:Baz'
   ],
   function (modules) {
-    //callback
+    // выполняется при удачной загрузке модулей
+    // modules - загруженные модули
   },
   function(err) {
     //error handler
