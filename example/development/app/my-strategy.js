@@ -20,7 +20,7 @@ wellDefine('MyStrategy', function (app) {
 				app.Router.configure({
 					actions: {
 
-						'/': 'Views:Pages:GetStarted',
+						'/': 'Views:Pages:Overview',
 						'/features': {
 							page: 'Views:Pages:Features',
 							layout: 'Views:Layouts:Main'

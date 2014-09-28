@@ -1,4 +1,4 @@
-<div class="sidebar get-started-sidebar">
+<div class="sidebar overview-sidebar">
     <ul class="menu">
         <li><span class="link active" data-link="h3-what-is">Что такое Well</span></li>
         <li><span class="link" data-link="h3-usage">Применение</span></li>
@@ -23,19 +23,18 @@
   <span class="k">this</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'Views:Partials:Sidebar'</span><span class="p">);</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'Plugins:VendorName:PluginName'</span><span class="p">);</span>
   <span class="c1">// тут хранятся дополнительные параметы, к которым можно обратиться </span>
-  <span class="c1">// через someModule.getConfigParam('paramName')</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">configure</span><span class="p">({</span>
+  <span class="c1">// через someModule.getOption('paramName')</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">({</span>
     <span class="nx">template</span><span class="o">:</span> <span class="s1">'Pages:AboutWell'</span><span class="p">,</span>
-    <span class="nx">otherConfigParam</span><span class="o">:</span> <span class="s1">'paramValue'</span>
+    <span class="nx">otherOption</span><span class="o">:</span> <span class="s1">'paramValue'</span>
   <span class="p">});</span>
   <span class="c1">// эта колбэк-функция вызовется при app.Module.get('Views:Pages:AboutWell');</span>
-  <span class="k">this</span><span class="p">.</span><span class="kr">export</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="kr">export</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// module code</span>
     <span class="c1">// all the dependencies are available here</span>
   <span class="p">});</span>
 <span class="p">});</span>
-</pre>
-        </div>
+</pre>        </div>
 
         <p>Для удобства чтения и понимания структуры проекта, наименования модулей в Welljs соответствуют их путям. Т.е. <code>'Views:Pages:AboutWell'</code> хранится в <code>views/pages/about-well.js</code>. </p>
 

@@ -1,8 +1,8 @@
-wellDefine('Views:Pages:GetStarted', function (app) {
+wellDefine('Views:Pages:Overview', function (app) {
 	this.use('Views:Common:Base');
-	this.use('Views:Partials:GetStartedSidebar');
+	this.use('Views:Partials:OverviewSidebar');
 	this.options({
-		template: 'Pages:GetStarted'
+		template: 'Pages:Overview'
 	});
 	this.export(function () {
 		return app.Views.get('Views:Common:Base').extend({
@@ -11,8 +11,8 @@ wellDefine('Views:Pages:GetStarted', function (app) {
 			},
 			render: function () {
 				this.$el.html(this.template.render());
-				this.sidebar = new (app.Views.get('Views:Partials:GetStartedSidebar'))({
-					el: this.$('.get-started-sidebar')
+				this.sidebar = new (app.Views.get('Views:Partials:OverviewSidebar'))({
+					el: this.$('.overview-sidebar')
 				});
 				return this;
 			}
