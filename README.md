@@ -3,18 +3,25 @@ __Welljs__ - это небольшой фреймворк предназначе
 Так выглядит модуль  Well:
 
 ```JavaScript
+// в любой модуль в качестве аргумента передается
+// ссылка на приложени
 wellDefine('Views:Pages:AboutWell', function(app) {
+  // зависимости можно подключать последовательно одна за другой, 
+  // или цепочкой this.use().use().use().configure().export();
   this.use('Views:Common:Basic');
   this.use('Views:Partials:Sidebar');
   this.use('Plugins:VendorName:PluginName');
-  this.configure({
+  // тут хранятся дополнительные параметы, к которым можно обратиться 
+  // через someModule.getOption('paramName')
+  this.options({
     template: 'Pages:AboutWell',
-    otherConfigParam: 'paramValue'
+    otherOption: 'paramValue'
   });
-  return function(options) {
-    // module code here
-    // at this time all deps are already loaded
-  }
+  // эта колбэк-функция вызовется при app.Module.get('Views:Pages:AboutWell');
+  this.export(function(args) {
+    // module code
+    // all the dependencies are available here
+  });
 });
 ```
 Для удобства чтения и понимания структуры проекта, наименования модулей в Welljs соответствуют их путям. Т.е. `'Views:Pages:AboutWell'` хранится в `views/pages/about-well.js`. 
