@@ -1,11 +1,11 @@
 //если в пользовательском приложении лэйаут не указан, будет использоваться этот
 wellDefine('Well:Defaults:Layout', function () {
-	this.configure({
+	this.options({
 		type: 'view',
 		template: ':Layout',
 		isDefault: true
 	});
-	return function () {
+	this.export(function () {
 		return Backbone.View.extend({
 			initialize: function () {
 			},
@@ -15,5 +15,5 @@ wellDefine('Well:Defaults:Layout', function () {
 				this.pageContainer = this.$('.main');
 			}
 		});
-	}
+	});
 });

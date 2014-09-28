@@ -74,9 +74,9 @@
 		},
 
 		onCoreLoadError: function (err) {
-			console.log(err.message);
+			console.log('Welljs: ', err.message);
 			if (this.reloaded) {
-				console.log('Error in project loading! Cant find Welljs root');
+				console.log('Error in project loading! Can\'t find Welljs root');
 			}
 			else {
 				console.log('Defaults will be loaded');

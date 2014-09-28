@@ -1,5 +1,5 @@
 wellDefine('Plugins:Well:Models', function (app) {
-	return function () {
+	this.export(function () {
 		var Controller = function () {
 			this.initialized ={};
 			this.modules = {};
@@ -13,7 +13,7 @@ wellDefine('Plugins:Well:Models', function (app) {
 		};
 
 		Controller.prototype.get = function (name) {
-			return this.modules[name].implementation();
+			return this.modules[name].exportFn();
 		};
 
 		Controller.prototype.set = function (module) {
@@ -21,5 +21,5 @@ wellDefine('Plugins:Well:Models', function (app) {
 		};
 
 		return new Controller();
-	}
+	});
 });

@@ -1,11 +1,11 @@
 wellDefine('Views:Pages:GetStarted', function (app) {
 	this.use('Views:Common:Base');
 	this.use('Views:Partials:GetStartedSidebar');
-	this.configure({
+	this.options({
 		template: 'Pages:GetStarted'
 	});
-	return function () {
-	  return app.Views.get('Views:Common:Base').extend({
+	this.export(function () {
+		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
 				this.template = options.template;
 			},
@@ -17,5 +17,5 @@ wellDefine('Views:Pages:GetStarted', function (app) {
 				return this;
 			}
 		});
-	};
+	});
 });

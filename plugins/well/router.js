@@ -1,5 +1,5 @@
 wellDefine('Plugins:Well:Router', function (app) {
-	return Backbone.Router.extend({
+	this.export(Backbone.Router.extend({
 		currentPage: null,
 		initialize: function (options) {
 			this.config = {};
@@ -56,9 +56,9 @@ wellDefine('Plugins:Well:Router', function (app) {
 			return _.isObject(action)
 				? (action['layout'] = this.customLayout)
 				: {
-						page: action,
-						layout: this.customLayout
-					}
+				page: action,
+				layout: this.customLayout
+			}
 		},
 
 		parseUrl: function (url) {
@@ -68,5 +68,5 @@ wellDefine('Plugins:Well:Router', function (app) {
 				params: args[1] || ''
 			};
 		}
-	});
+	}));
 });

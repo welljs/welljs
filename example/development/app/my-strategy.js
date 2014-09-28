@@ -1,5 +1,5 @@
 wellDefine('MyStrategy', function (app) {
-	return function () {
+	this.export(function () {
 		var WellSite = function () {
 			var self = this;
 			app.Modules.require([
@@ -51,5 +51,5 @@ wellDefine('MyStrategy', function (app) {
 			}
 		});
 		return new WellSite();
-	}
+	});
 });

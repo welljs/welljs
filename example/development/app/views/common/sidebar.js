@@ -1,6 +1,6 @@
 wellDefine('Views:Common:Sidebar', function (app) {
 	this.use(':Base');
-	return function () {
+	this.export(function () {
 		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
 				this.template = options.template;
@@ -22,5 +22,5 @@ wellDefine('Views:Common:Sidebar', function (app) {
 				this.activeitem = target.addClass('active');
 			}
 		});
-	};
+	});
 });

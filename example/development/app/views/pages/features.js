@@ -1,37 +1,17 @@
-wellDefine('Views:Pages:Catalog', function (app) {
+wellDefine('Views:Pages:Features', function (app) {
 	this.use('Views:Common:Base');
-	this.use('Views:Layouts:Main');
-	this.configure({
-		layout: 'Views:Layouts:Main',
-		template: 'Pages:Catalog',
-		route: 'catalog'
+	this.options({
+		template: 'Pages:Features'
 	});
-	return function () {
-	  return app.Views.get('Views:Common:Base').extend({
+	this.export(function () {
+		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
 				this.template = options.template;
 			},
 			render: function () {
-				var cats = [
-					{
-						name: 'Camera',
-						id: 1,
-						brand: 'Sony'
-					},
-					{
-						name: 'Smartphone',
-						id: 2,
-						brand: 'Nokia'
-					},
-					{
-						name: 'TV',
-						id: 3,
-						brand: 'Samsung'
-					}
-				];
-				this.$el.html(this.template.render({cats: cats}));
+				this.$el.html(this.template.render());
 				return this;
 			}
 		});
-	};
+	});
 });

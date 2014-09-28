@@ -1,11 +1,11 @@
 //страница по-умолчанию, если приложение не создано или не найдено
 wellDefine('Well:Defaults:About', function () {
-	this.configure({
+	this.options({
 		template: ':About',
 		type: 'view',
 		isDefault: true
 	});
-	return function () {
+	this.export(function () {
 		return Backbone.View.extend({
 			initialize: function () {
 
@@ -14,5 +14,5 @@ wellDefine('Well:Defaults:About', function () {
 				this.$el.html(this.template.render());
 			}
 		});
-	}
+	});
 });

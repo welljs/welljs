@@ -1,5 +1,5 @@
 wellDefine('Utils:HandlebarsHelpers', function (app) {
-	return function () {
+	this.export(function () {
 		Handlebars.registerHelper('url', function (route) {
 			if (route === '/')
 				route = '';
@@ -8,5 +8,5 @@ wellDefine('Utils:HandlebarsHelpers', function (app) {
 		Handlebars.registerHelper('copyright', function () {
 			return '©' + new Date().getFullYear();
 		});
-	};
+	});
 });

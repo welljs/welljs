@@ -1,5 +1,5 @@
 wellDefine('Plugins:Well:Views', function (app) {
-	return function(){
+	this.export(function(){
 		var Controller = function () {
 			app.Events.on('ROUTER_PAGE_CHANGED', this.tryToRender, this);
 			app.Events.on('MODULE_DEFINED', this.onModuleDefined, this);
@@ -17,7 +17,7 @@ wellDefine('Plugins:Well:Views', function (app) {
 			},
 
 			get: function (viewName) {
-				return this.modules[viewName].implementation();
+				return this.modules[viewName].exportFn();
 			},
 
 			getModule: function (viewName) {
@@ -36,14 +36,14 @@ wellDefine('Plugins:Well:Views', function (app) {
 			getPartials: function (module) {
 				if (module) {
 					var mod = _.isString(module) ? this.getModule(module) : module;
-					return mod.getConfigParam('partials') || [];
+					return mod.getOption('partials') || [];
 				}
 			},
 
 			getTemplate: function (module) {
 				if (module) {
 					var mod = _.isString(module) ? this.getModule(module) : module;
-					var name = mod.getConfigParam('template');
+					var name = mod.getOption('template');
 					return app.Templates.get(name) || name;
 				}
 			},
@@ -73,7 +73,7 @@ wellDefine('Plugins:Well:Views', function (app) {
 				if (template) {
 					templates.push({
 						name: template,
-						path: this.getHtmlPath(module) + app.transformToPath(module.getConfigParam('template'))
+						path: this.getHtmlPath(module) + app.transformToPath(module.getOption('template'))
 					});
 				}
 
@@ -255,12 +255,12 @@ wellDefine('Plugins:Well:Views', function (app) {
 			},
 
 			getHtmlPath: function (module) {
-				return (module.getConfigParam('isDefault'))
+				return (module.getOption('isDefault'))
 					? '/'
 					: (this.config.templates || '/');
 			}
 
 		});
 		return new Controller();
-	}
+	});
 });

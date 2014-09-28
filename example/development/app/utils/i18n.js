@@ -1,5 +1,5 @@
 wellDefine('Utils:I18n', function (app) {
-	return function () {
+	this.export(function () {
 		return {
 			translate: function () {
 
@@ -8,5 +8,5 @@ wellDefine('Utils:I18n', function (app) {
 
 			}
 		};
-	};
+	});
 });

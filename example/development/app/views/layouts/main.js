@@ -1,13 +1,13 @@
 wellDefine('Views:Layouts:Main', function (app) {
 	this.use('Views:Common:Base');
 	this.use('Views:Partials:Header');
-	this.configure({
+	this.options({
 		template: 'Layouts:Main',
 		partials: [
 			'Partials:Header'
 		]
 	});
-	return function () {
+	this.export(function () {
 		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
 				this.template = options.template;
@@ -28,5 +28,5 @@ wellDefine('Views:Layouts:Main', function (app) {
 				});
 			}
 		});
-	};
+	});
 });

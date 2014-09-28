@@ -1,5 +1,5 @@
 wellDefine('Utils:Helpers', function (app) {
-	return function () {
+	this.export(function () {
 		return {
 			translate: function () {
 
@@ -9,5 +9,5 @@ wellDefine('Utils:Helpers', function (app) {
 				return /:([^:]+)$/.exec('www:eee:qqq')[1];
 			}
 		};
-	};
+	});
 });

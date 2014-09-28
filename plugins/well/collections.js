@@ -1,5 +1,5 @@
 wellDefine('Plugins:Well:Collections', function (app) {
-	return function () {
+	this.export(function () {
 		var Controller = function () {};
 		_.extend(Controller.prototype, {
 			storage: {},
@@ -11,5 +11,5 @@ wellDefine('Plugins:Well:Collections', function (app) {
 			}
 		});
 		return new Controller();
-	}
+	});
 });

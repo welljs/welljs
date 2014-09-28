@@ -1,12 +1,12 @@
 //страница 404 по-умолчанию, если не найдена пользовательская
 wellDefine('Well:Defaults:NotFound', function () {
 	this.use(':Layout');
-	this.configure({
+	this.options({
 		template: ':NotFound',
 		type: 'view',
 		isDefault: true
 	});
-	return function () {
+	this.export(function () {
 		return Backbone.View.extend({
 			initialize: function () {
 
@@ -16,5 +16,5 @@ wellDefine('Well:Defaults:NotFound', function () {
 			}
 
 		});
-	}
+	});
 });

@@ -1,10 +1,10 @@
 wellDefine('Views:Pages:NotFound', function (app) {
 	this.use('Views:Common:Base');
-	this.configure({
+	this.options({
 		template: 'Pages:NotFound'
 	});
-	return function () {
-	  return app.Views.get('Views:Common:Base').extend({
+	this.export(function () {
+		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
 				this.template = options.template;
 			},
@@ -13,5 +13,5 @@ wellDefine('Views:Pages:NotFound', function (app) {
 				return this;
 			}
 		});
-	};
+	});
 });

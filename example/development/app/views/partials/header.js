@@ -1,6 +1,6 @@
 wellDefine('Views:Partials:Header', function (app) {
 	this.use('Views:Common:Base');
-	return function () {
+	this.export(function () {
 		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
 				this.template = options.template;
@@ -14,5 +14,5 @@ wellDefine('Views:Partials:Header', function (app) {
 				this.selectedItem = this.ul.find('.' + route).addClass('active');
 			}
 		});
-	};
+	});
 });

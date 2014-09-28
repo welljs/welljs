@@ -9,46 +9,51 @@
 		this.onCompleteFns = [];
 		this.controller = app.Modules;
 		try {
-			this.implementation = fn.call(this, app);
+			fn.call(this, app);
 		}
 		catch (e) {
 			console.log('error in module: ' + name);
 		}
-		this.setType(this.config.type || name.split(':')[0]);
+		this._setType(this.config.type || name.split(':')[0]);
 		_.isEmpty(this.deps)
 			? next(this)
 			: this.waitForDeps(next);
 	};
 
-	Module.prototype.isShortHand = function (name) {
+	Module.prototype.use = function (module) {
+		this.deps.push(this._toFullName(module));
+		return this;
+	};
+
+	Module.prototype.options = function (options) {
+		var opts = options || {};
+		opts.template = this._toFullName(opts.template);
+		this.config = opts;
+		return this;
+	};
+
+	Module.prototype.export = function (fn) {
+		this.exportFn = fn;
+		return this;
+	};
+
+	Module.prototype.getOption = function (prop) {
+		return this.config[prop];
+	};
+
+	Module.prototype._isShortHand = function (name) {
 		return name[0] === ':';
 	};
 
-	Module.prototype.toFullName = function (name) {
-		if (!this.isShortHand(name))
+	Module.prototype._toFullName = function (name) {
+		if (!this._isShortHand(name))
 			return name;
 		var t = this.name.split(':');
 		t.splice(-1, 1);
 		return	t.join(':') + name;
 	};
 
-	Module.prototype.use = function (module) {
-		this.deps.push(this.toFullName(module));
-		return this;
-	};
-
-	Module.prototype.configure = function (options) {
-		var opts = options || {};
-		opts.template = this.toFullName(opts.template);
-		this.config = opts;
-		return this;
-	};
-
-	Module.prototype.getConfigParam = function (prop) {
-		return this.config[prop];
-	};
-
-	Module.prototype.setType = function (type) {
+	Module.prototype._setType = function (type) {
 		if (type.substr(-1) === 's')
 			type = type.slice(0, -1);
 		switch (type.toLowerCase()) {
@@ -124,7 +129,7 @@
 	};
 
 	Controller.prototype.get = function (name) {
-		return this.modules[name].implementation;
+		return this.modules[name].exportFn;
 	};
 
 	Controller.prototype.getModule = function (name) {
@@ -145,7 +150,7 @@
 		return this;
 	};
 
-//поиск по атрибутам которые указаны в this.configure(). например по шаблону или по пути
+//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
 	Controller.prototype.findBy = function (criteria, value) {
 		return _.find(this.modules, function (module) {
 			return module.config[criteria] === value;
