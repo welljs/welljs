@@ -157,7 +157,7 @@
 		}, this);
 	};
 
-//requirejs wrapper
+  //AMD provider wrapper
 	Controller.prototype.require = function (modules, next, err) {
 		var missing = this.findMissing(modules);
 		//если модули уже загружены - вызов
@@ -170,10 +170,15 @@
 			missing = _.map(missing, function (moduleName) {
 				return app.transformToPath(moduleName);
 			}, this);
-			//requirejs call
-			require(missing, function(){}, err);
+			this.vendorRequire(missing, function(){}, err);
 		}
 		return this;
+	};
+
+	//override this method to setup your AMD vendor
+	Controller.prototype.vendorRequire = function (modules, next, err) {
+		//requirejs call
+		require(modules, next, err);
 	};
 
 	Controller.prototype.exist = function (moduleName) {
