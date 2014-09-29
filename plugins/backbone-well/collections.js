@@ -1,4 +1,4 @@
-wellDefine('Plugins:Well:Collections', function (app) {
+wellDefine('Plugins:BackboneWell:Collections', function (app) {
 	this.export(function () {
 		var Controller = function () {};
 		_.extend(Controller.prototype, {

@@ -1,4 +1,4 @@
-wellDefine('Plugins:Well:Models', function (app) {
+wellDefine('Plugins:BackboneWell:Models', function (app) {
 	this.export(function () {
 		var Controller = function () {
 			this.initialized ={};

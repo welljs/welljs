@@ -1,4 +1,4 @@
-wellDefine('Plugins:Well:Router', function (app) {
+wellDefine('Plugins:BackboneWell:Router', function (app) {
 	this.export(Backbone.Router.extend({
 		currentPage: null,
 		initialize: function (options) {
