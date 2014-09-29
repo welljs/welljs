@@ -7,7 +7,7 @@ __Welljs__ - это, основанный на AMD (Asynchronous Module Definiti
 // ссылка на приложени
 wellDefine('Views:Pages:AboutWell', function(app) {
   // зависимости можно подключать последовательно одна за другой, 
-  // или цепочкой this.use().use().use().configure().export();
+  // или цепочкой this.use().use().use().options().export();
   this.use('Views:Common:Basic');
   this.use('Views:Partials:Sidebar');
   this.use('Plugins:VendorName:PluginName');
@@ -57,8 +57,8 @@ var myModule = new MyModule({option: 'some option'});
 
 ###Applications
 
-Поставляемые из коробки плагины Router, Views, Models, Collections позволяют быстро развернуть Backbone приложение
-Ссыка на пример 
+Поставляемые из коробки плагины Router, Views, Models, Collections, Templates, PageView позволяют быстро развернуть Backbone приложение
+[Demo & Documentation](http://welljs.org/)
 Если вы разработчик Angular, можете написать свои плагины для работы с Angular
 
 Пример структуры нескольких проектов

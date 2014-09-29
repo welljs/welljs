@@ -1,7 +1,7 @@
-wellDefine('Views:Pages:NotFound', function (app) {
+wellDefine('Views:Pages:Installation', function (app) {
 	this.use('Views:Common:Base');
 	this.options({
-		template: 'Pages:NotFound'
+		template: 'Pages:Installation'
 	});
 	this.export(function () {
 		return app.Views.get('Views:Common:Base').extend({

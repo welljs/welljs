@@ -3,7 +3,6 @@ wellDefine('Views:Common:Sidebar', function (app) {
 	this.export(function () {
 		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
-				this.template = options.template;
 				this.docBody = $('html, body');
 				this.activeitem = this.$('.active');
 				app.Events.on('PAGE_RENDERED', this.onPageRendered, this)

@@ -6,9 +6,6 @@ wellDefine('Views:Pages:Overview', function (app) {
 	});
 	this.export(function () {
 		return app.Views.get('Views:Common:Base').extend({
-			initialize: function (options) {
-				this.template = options.template;
-			},
 			render: function () {
 				this.$el.html(this.template.render());
 				this.sidebar = new (app.Views.get('Views:Partials:OverviewSidebar'))({

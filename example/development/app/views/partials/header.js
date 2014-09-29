@@ -3,7 +3,6 @@ wellDefine('Views:Partials:Header', function (app) {
 	this.export(function () {
 		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
-				this.template = options.template;
 				this.selectedItem = this.$('.active');
 				this.ul = this.$('.navigation');
 				app.Events.on('PAGE_RENDERED', this.onItemClick, this);

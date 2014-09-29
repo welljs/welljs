@@ -4,19 +4,20 @@
 		this.isProduction = options.isProduction;
 		this.defaults = {
 			strategy: 'Well:Defaults:Strategy',
-			router: 'Plugins:Well:Router',
-			templates: 'Plugins:Well:Templates',
-			views: 'Plugins:Well:Views',
-			models: 'Plugins:Well:Models',
-			collections: 'Plugins:Well:Collections'
+			router: 'Plugins:BackboneWell:Router',
+			templates: 'Plugins:BackboneWell:Templates',
+			views: 'Plugins:BackboneWell:Views',
+			models: 'Plugins:BackboneWell:Models',
+			collections: 'Plugins:BackboneWell:Collections'
 		};
 		this.options = _.extend(this.defaults, options);
-		this.Events = _.extend(Backbone.Events, {});
+		this.Events = _.extend(options.eventsEngine || Backbone.Events, {});
 		window[this.options.appName || 'Well'] = this;
 		this.init();
 	};
 
 	_.extend(App.prototype,{
+		//вынести в контроллер модулей
 		requireConfig: function () {
 			requirejs.config({
 				urlArgs: this.options.cache === false ? (new Date()).getTime() :  '',

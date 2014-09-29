@@ -10,7 +10,6 @@ wellDefine('Views:Layouts:Main', function (app) {
 	this.export(function () {
 		return app.Views.get('Views:Common:Base').extend({
 			initialize: function (options) {
-				this.template = options.template;
 				Handlebars.registerPartial('header', app.Templates.get('Partials:Header').render());
 				app.Events.on('PAGE_RENDERED', this.onPageRendered, this);
 			},

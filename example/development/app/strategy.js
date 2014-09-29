@@ -1,4 +1,4 @@
-wellDefine('MyStrategy', function (app) {
+wellDefine('Strategy', function (app) {
 	this.export(function () {
 		var WellSite = function () {
 			var self = this;
@@ -21,6 +21,7 @@ wellDefine('MyStrategy', function (app) {
 					actions: {
 
 						'/': 'Views:Pages:Overview',
+						'/installation': 'Views:Pages:Installation',
 						'/features': {
 							page: 'Views:Pages:Features',
 							layout: 'Views:Layouts:Main'
