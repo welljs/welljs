@@ -57,8 +57,8 @@ var myModule = new MyModule({option: 'some option'});
 
 ###Applications
 
-Поставляемые из коробки плагины Router, Views, Models, Collections, Templates, PageView позволяют быстро развернуть Backbone приложение
-[Demo & Documentation](http://welljs.org/)
+Поставляемые из коробки плагины Router, Views, Models, Collections и Templates позволяют быстро развернуть
+[Backbone приложение](http://welljs.org/)
 Если вы разработчик Angular, можете написать свои плагины для работы с Angular
 
 Пример структуры нескольких проектов
