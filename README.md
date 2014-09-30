@@ -8,7 +8,7 @@ __Welljs__ - это, основанный на AMD (Asynchronous Module Definiti
 wellDefine('Views:Pages:AboutWell', function(app) {
   // зависимости можно подключать последовательно одна за другой, 
   // или цепочкой this.use().use().use().options().export();
-  this.use('Views:Common:Basic');
+  this.use('Views:Common:Page');
   this.use('Views:Partials:Sidebar');
   this.use('Plugins:VendorName:PluginName');
   // тут хранятся дополнительные параметы, к которым можно обратиться 
@@ -21,6 +21,9 @@ wellDefine('Views:Pages:AboutWell', function(app) {
   this.export(function(args) {
     // module code
     // all the dependencies are available here
+    return app.Modules.get('Views:Common:Page').extend({
+      //Backbone page view
+    });
   });
 });
 ```
@@ -55,28 +58,14 @@ var MyModule = app.Modules.get('Foo:Bar:MyModule');
 var myModule = new MyModule({option: 'some option'});
 ```
 
-###Applications
+###Features
+* __Удобное подключение зависимостей__ Зависимости подключаются линейно внутри модуля, и доступны в секции *export*. 
+* __Система имен__ Наименования модулей соответсвуют их путям. Это позволяет легко разбираться в структуре проекта, а так же без проблема подключать модули написанные другими разработчиками.
+* __Поддержка AMD__ Из коробки Welljs подключает модули посредством Require.js, но дает возможность использовать другие библиотеки.
+* __Плагины__ Welljs дает разработчикам возможность писать собственные плагины и делиться ими через пакетный менеджер Bower.
+* __[Backbone-приложение](backbonejs.org)__ В комплект Well включены плагины Router, Views, Models, Collections, Templates, которые позволят быстро развернуть JavaScript-приложение. [Пример на GitHub](https://github.com/welljs/welljs/tree/master/example/development)
+* __Фреймворки__ Если вы используете другой фреймворк, например Angular, можете написать плагины для работы с Angular 
+* ___Приложения__ Структура Well позволяет создавать несколько приложений которые будут использовать одни и те же плагины и библиотеки. Нужно только [настроить](http://welljs.org/#installation/applications) Nginx
+* __Сборка__. Из коробки предлагается сборщик проекта для Gulp
 
-Поставляемые из коробки плагины Router, Views, Models, Collections и Templates позволяют быстро развернуть
-[Backbone приложение](http://welljs.org/)
-Если вы разработчик Angular, можете написать свои плагины для работы с Angular
-
-Пример структуры нескольких проектов
-
-
-###Plugins
-
-Well предоставляет возможность писать независимые плагины и использовать их в разных приложениях. Так же обмениваться ими, через пакетный менеджер bower
-
-###Installation
-
-1) Склонировать репозиторий
-
-`git clone https://github.com/welljs/welljs.git`
-
-2) Установить зависимости командой
-
-`bower install`
-
-
-Ссылка на подробную документацию к проекту
+[Документация и пример к проекту](http://welljs.org/#documentation )
