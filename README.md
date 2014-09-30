@@ -1,4 +1,4 @@
-__Welljs__ - это, основанный на AMD (Asynchronous Module Definition), JavaScript-фреймворк предназначенный для развертывания и масштабирования клиентских приложений. Ключевая особенность - систематизированная работа с модулями и их зависимостями. В качестве AMD-движка Well использует [Require.js](http://requirejs.org/), но позволяет легко заменить его на любой другой.
+__Welljs__ - это, основанный на AMD (Asynchronous Module Definition), JavaScript-фреймворк предназначенный для развертывания и масштабирования клиентских приложений. Ключевая особенность - это систематизированная работа с модулями и их зависимостями. В качестве AMD-движка Well использует [Require.js](http://requirejs.org/), но позволяет легко заменить его на любой другой.
 
 Так выглядит модуль  Well:
 
@@ -21,9 +21,6 @@ wellDefine('Views:Pages:AboutWell', function(app) {
   this.export(function(args) {
     // module code
     // all the dependencies are available here
-    return app.Modules.get('Views:Common:Page').extend({
-      //Backbone page view
-    });
   });
 });
 ```
