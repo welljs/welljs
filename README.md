@@ -4,7 +4,7 @@ __Welljs__ - это, основанный на AMD (Asynchronous Module Definiti
 
 ```JavaScript
 // в любой модуль в качестве аргумента передается
-// ссылка на приложени
+// ссылка на приложение
 wellDefine('Views:Pages:AboutWell', function(app) {
   // зависимости можно подключать последовательно одна за другой, 
   // или цепочкой this.use().use().use().options().export();
