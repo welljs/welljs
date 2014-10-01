@@ -1,7 +1,6 @@
 wellDefine('Views:Common:Sidebar', function (app) {
-	this.use(':Base');
 	this.export(function () {
-		return app.Views.get('Views:Common:Base').extend({
+		return Backbone.View.extend({
 			initialize: function (options) {
 				this.docBody = $('html, body');
 				this.activeitem = this.$('.active');

@@ -7,17 +7,16 @@
 </div>
 <div class="content">
     <h3 id="h3-what-is">Что такое Well?</h3>
-    <article class="markdown-body entry-content" itemprop="mainContentOfPage"><p><strong>Welljs</strong> - это небольшой фреймворк предназначенный для построения javascript-приложений. В качестве AMD-решения Well использует <a href="http://requirejs.org/">Require.js</a></p>
+    <article class="markdown-body entry-content" itemprop="mainContentOfPage"><p><strong>Welljs</strong> - это, основанный на AMD (Asynchronous Module Definition), JavaScript-фреймворк предназначенный для развертывания и масштабирования клиентских приложений. Ключевая особенность - это систематизированная работа с модулями и их зависимостями. В качестве AMD-движка Well использует <a href="http://requirejs.org/">Require.js</a>, но позволяет легко заменить его на любой другой.</p>
 
         <p>Так выглядит модуль  Well:</p>
 
-        <div class="highlight highlight-JavaScript">
-<pre><span class="c1">// в любой модуль в качестве аргумента передается</span>
-<span class="c1">// ссылка на приложени</span>
+        <div class="highlight highlight-JavaScript"><pre><span class="c1">// в любой модуль в качестве аргумента передается</span>
+<span class="c1">// ссылка на приложение</span>
 <span class="nx">wellDefine</span><span class="p">(</span><span class="s1">'Views:Pages:AboutWell'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// зависимости можно подключать последовательно одна за другой, </span>
-  <span class="c1">// или цепочкой this.use().use().use().configure().export();</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'Views:Common:Basic'</span><span class="p">);</span>
+  <span class="c1">// или цепочкой this.use().use().use().options().export();</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'Views:Common:Page'</span><span class="p">);</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'Views:Partials:Sidebar'</span><span class="p">);</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">'Plugins:VendorName:PluginName'</span><span class="p">);</span>
   <span class="c1">// тут хранятся дополнительные параметы, к которым можно обратиться </span>
@@ -32,19 +31,9 @@
     <span class="c1">// all the dependencies are available here</span>
   <span class="p">});</span>
 <span class="p">});</span>
-</pre>        </div>
-
-        <p>Для удобства чтения и понимания структуры проекта, наименования модулей в Welljs соответствуют их путям. Т.е. <code>'Views:Pages:AboutWell'</code> хранится в <code>views/pages/about-well.js</code>. </p>
-
-        <p>Корневые директории прописываются в WellConfig</p>
-
-        <div class="highlight highlight-javascript"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">WellConfig</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">strategy</span><span class="o">:</span> <span class="s1">'MyStrategy'</span><span class="p">,</span>
-    <span class="nx">appRoot</span><span class="o">:</span> <span class="s1">'/app'</span><span class="p">,</span>
-    <span class="nx">wellRoot</span><span class="o">:</span> <span class="s1">'/well'</span><span class="p">,</span>
-    <span class="nx">pluginsRoot</span><span class="o">:</span> <span class="s1">'/plugins'</span>
-<span class="p">};</span>
 </pre></div>
+
+        <p>Для удобного ориентирования, наименования модулей в Welljs соответствуют их путям. Т.е. <code>'Views:Pages:AboutWell'</code> хранится в <code>views/pages/about-well.js</code>. </p>
 
         <p>Если у модуля есть зависимости, они указываются через <code>this.use('Path:To:DependencyModule')</code>. Если зависимый модуль находится в той же директории что и исходный, то его можно указать кратко: <code>this.use(':DependencyModule')</code> </p>
 
@@ -53,13 +42,16 @@
 
         <p>Модули загружаются следующим образом:</p>
 
-        <div class="highlight highlight-javascript"><pre><span class="nx">app</span><span class="p">.</span><span class="nx">Modules</span><span class="p">.</span><span class="nx">require</span><span class="p">([</span>
+        <div class="highlight highlight-javascript"><pre><span class="c1">// app - неймспес приложения. доступен везде</span>
+<span class="c1">// Modules - контроллер модулей</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">Modules</span><span class="p">.</span><span class="nx">require</span><span class="p">([</span>
     <span class="s1">'Full:ModuleName:Foo'</span><span class="p">,</span>
     <span class="s1">'Full:ModuleName:Bar'</span><span class="p">,</span>
     <span class="s1">'Full:ModuleName:Baz'</span>
   <span class="p">],</span>
   <span class="kd">function</span> <span class="p">(</span><span class="nx">modules</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">//callback</span>
+    <span class="c1">// выполняется при удачной загрузке модулей</span>
+    <span class="c1">// modules - загруженные модули</span>
   <span class="p">},</span>
   <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">//error handler</span>
@@ -73,31 +65,28 @@
 <span class="kd">var</span> <span class="nx">myModule</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyModule</span><span class="p">({</span><span class="nx">option</span><span class="o">:</span> <span class="s1">'some option'</span><span class="p">});</span>
 </pre></div>
 
-        <h3>
-            <a name="user-content-applications" class="anchor" href="#applications" aria-hidden="true"><span class="octicon octicon-link"></span></a>Applications</h3>
+        <br/>
+        <h3 id="h3-features">
+            <a name="user-content-features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
 
-        <p>Поставляемые из коробки плагины Router, Views, Models, Collections позволяют быстро развернуть Backbone приложение
-            Ссыка на пример
-            Если вы разработчик Angular, можете написать свои плагины для работы с Angular</p>
-
-        <p>Пример структуры нескольких проектов</p>
-
-        <h3>
-            <a name="user-content-plugins" class="anchor" href="#plugins" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plugins</h3>
-
-        <p>Well предоставляет возможность писать независимые плагины и использовать их в разных приложениях. Так же обмениваться ими, через пакетный менеджер bower</p>
-
-        <h3>
-            <a name="user-content-installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
-
-        <p>1) Склонировать репозиторий</p>
-
-        <p><code>git clone https://github.com/welljs/welljs.git</code></p>
-
-        <p>2) Установить зависимости командой</p>
-
-        <p><code>bower install</code></p>
-
-        <p>Ссылка на подробную документацию к проекту</p>
-	</article>
+        <ul class="task-list">
+            <li>
+                <strong>Удобное подключение зависимостей</strong> Зависимости подключаются линейно внутри модуля, и доступны в секции <em>export</em>. </li>
+            <li>
+                <strong>Система имен</strong> Наименования модулей соответсвуют их путям. Это позволяет легко разбираться в структуре проекта, а так же без проблема подключать модули написанные другими разработчиками.</li>
+            <li>
+                <strong>Поддержка AMD</strong> Из коробки Welljs подключает модули посредством Require.js, но дает возможность использовать другие библиотеки.</li>
+            <li>
+                <strong>Плагины</strong> Welljs дает разработчикам возможность писать собственные плагины и делиться ими через пакетный менеджер Bower.</li>
+            <li>
+                <strong><a href="/welljs/welljs/blob/master/backbonejs.org">Backbone-приложение</a></strong> В комплект Well включены плагины Router, Views, Models, Collections, Templates, которые позволят быстро развернуть Backbone-приложение. <a href="https://github.com/welljs/welljs/tree/master/example/development">Пример на GitHub</a>
+            </li>
+            <li>
+                <strong>Фреймворки</strong> Если вы используете другой фреймворк, например Angular, можете написать плагины для работы с Angular&nbsp;</li>
+            <li>
+                <strong>Приложения</strong> Структура Well позволяет создавать несколько приложений которые будут использовать одни и те же плагины и библиотеки. Нужно только <a href="http://welljs.org/#installation/applications">настроить</a> Nginx</li>
+            <li>
+                <strong>Сборка</strong>. Из коробки предлагается сборщик проекта для Gulp</li>
+        </ul><p><a href="http://welljs.org/#documentation">Документация и пример к проекту</a></p>
+    </article>
 </div>

@@ -1,7 +1,6 @@
 wellDefine('Views:Partials:Header', function (app) {
-	this.use('Views:Common:Base');
 	this.export(function () {
-		return app.Views.get('Views:Common:Base').extend({
+		return Backbone.View.extend({
 			initialize: function (options) {
 				this.selectedItem = this.$('.active');
 				this.ul = this.$('.navigation');

@@ -1,5 +1,4 @@
 wellDefine('Views:Layouts:Main', function (app) {
-	this.use('Views:Common:Base');
 	this.use('Views:Partials:Header');
 	this.options({
 		template: 'Layouts:Main',
@@ -8,7 +7,7 @@ wellDefine('Views:Layouts:Main', function (app) {
 		]
 	});
 	this.export(function () {
-		return app.Views.get('Views:Common:Base').extend({
+		return Backbone.View.extend({
 			initialize: function (options) {
 				Handlebars.registerPartial('header', app.Templates.get('Partials:Header').render());
 				app.Events.on('PAGE_RENDERED', this.onPageRendered, this);
