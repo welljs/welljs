@@ -12,7 +12,7 @@ function createServer(name, port, currentEnv) {
 		development: 'development'
 	}[currentEnv] || '';
 
-	app.use(express.static(path.join(__dirname, '../' + name + '/' + env + '/'), {hidden : true}));
+	app.use(express.static(path.join(__dirname, '../apps/' + name + '/' + env + '/'), {hidden : true}));
 	app.set('port', port);
 	http.createServer(app).listen(app.get('port'), '127.0.0.1', function(){
 		console.log('Express server listening on port ' + port);
@@ -20,4 +20,4 @@ function createServer(name, port, currentEnv) {
 	});
 }
 
-createServer('example', 3002, 'development');
+createServer('ProjectExample', 3002, 'development');

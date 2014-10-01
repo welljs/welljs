@@ -3,7 +3,11 @@ wellDefine('Views:Common:Page', function (app) {
 		return Backbone.View.extend({
 			render: function () {
 				this.$el.html(this.template.render());
+				this.subscribe();
 				return this;
+			},
+			subscribe: function () {
+
 			}
 		});
 	});
