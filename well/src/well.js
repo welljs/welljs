@@ -1,5 +1,3 @@
-(function () {
-	'use strict';
 	var App = function (options) {
 		this.isProduction = options.isProduction;
 		this.defaults = {
@@ -26,14 +24,15 @@
 				baseUrl: this.options.appRoot,
 				paths: {
 					well: this.options.wellRoot,
-					plugins: this.options.pluginsRoot
+					plugins: this.options.pluginsRoot,
+					vendor: this.options.vendorRoot
 				}
 			});
 			return this;
 		},
 
 		init: function () {
-			this.Modules = new WellModuleController(this);
+			this.Modules = new Modules(this);
 			if (!this.isProduction)
 				this.requireConfig();
 			this.loadCore();
@@ -67,11 +66,11 @@
 			this.Templates = new (Modules.get(this.options.templates));
 			this.Views = new (Modules.get(this.options.views));
 			this.Modules.require([this.options.strategy], function () {
-				self.Strategy = new(Modules.get(self.options.strategy));
-			},
-			function (err) {
-				self.onCoreLoadError.call(self, err);
-			});
+					self.Strategy = new(Modules.get(self.options.strategy));
+				},
+				function (err) {
+					self.onCoreLoadError.call(self, err);
+				});
 			return this;
 		},
 
@@ -89,7 +88,7 @@
 		},
 
 		start: function () {
-		  this.Router.start();
+			this.Router.start();
 		},
 
 		//SomeModule:Name -> some-module/name
@@ -117,4 +116,3 @@
 	});
 
 	new App(window.WellConfig || {});
-})();
