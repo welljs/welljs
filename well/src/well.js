@@ -11,12 +11,13 @@
 			collections: 'Plugins:BackboneWell:Collections'
 		};
 		this.options = _.extend(this.defaults, options);
-		this.Events = _.extend(options.eventsEngine || Backbone.Events, {});
+		this.Events = _.extend(options.eventsEngine || new EventsController());
 		window[this.options.appName || 'Well'] = this;
 		this.init();
 	};
 
 	_.extend(App.prototype,{
+
 		//вынести в контроллер модулей
 		requireConfig: function () {
 			requirejs.config({
