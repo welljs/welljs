@@ -1,4 +1,4 @@
-	//Events ideas little borrowed from Backbone
+	//Events ideas little borrowed from Backbone.js
 	var EventsController = function () {};
 	EventsController.prototype.on = function (name, callback, context) {
 		this._events || (this._events = {});

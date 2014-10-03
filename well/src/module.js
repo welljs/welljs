@@ -13,7 +13,7 @@
 			console.log('error in module: ' + name);
 		}
 		this._setType(this.config.type || name.split(':')[0]);
-		_.isEmpty(this.deps) ? next(this)	: this.waitForDeps(next);
+		!this.deps.length ? next(this)	: this.waitForDeps(next);
 	};
 
 	Module.prototype.use = function (module) {

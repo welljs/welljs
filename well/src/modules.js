@@ -37,7 +37,7 @@
 	Modules.prototype.require = function (modules, next, err) {
 		var missing = this.findMissing(modules);
 		//если модули уже загружены - вызов
-		if (_.isEmpty(missing))
+		if (!missing.length)
 			return next(this.pack(modules));
 
 		new Queue(_.clone(missing), next, this.app);
