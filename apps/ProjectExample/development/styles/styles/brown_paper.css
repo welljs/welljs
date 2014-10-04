@@ -1,22 +1,15 @@
 /*
 
-School Book style from goldblog.com.ua (c) Zaripov Yura <yur4ik7@ukr.net>
+Brown Paper style from goldblog.com.ua (c) Zaripov Yura <yur4ik7@ukr.net>
 
 */
 
 .hljs {
   display: block;
   overflow-x: auto;
-  padding: 15px 0.5em 0.5em 30px;
-  font-size: 11px !important;
-  line-height:16px !important;
+  padding: 0.5em;
+  background:#b7a68e url(brown_papersq.png);
   -webkit-text-size-adjust: none;
-}
-
-pre{
-  background:#f6f6ae url(./school_book.png);
-  border-top: solid 2px #d2e8b9;
-  border-bottom: solid 1px #d2e8b9;
 }
 
 .hljs-keyword,
@@ -25,7 +18,9 @@ pre{
 .hljs-winutils,
 .hljs-flow,
 .nginx .hljs-title,
-.tex .hljs-special {
+.tex .hljs-special,
+.hljs-request,
+.hljs-status {
   color:#005599;
   font-weight:bold;
 }
@@ -33,7 +28,7 @@ pre{
 .hljs,
 .hljs-subst,
 .hljs-tag .hljs-keyword {
-  color: #3e5915;
+  color: #363c69;
 }
 
 .hljs-string,
@@ -62,9 +57,7 @@ pre{
 .hljs-envvar,
 .apache .hljs-tag,
 .apache .hljs-cbracket,
-.nginx .hljs-built_in,
-.tex .hljs-command,
-.coffeescript .hljs-attribute {
+.tex .hljs-number {
   color: #2c009f;
 }
 
@@ -76,8 +69,10 @@ pre{
 .hljs-doctype,
 .hljs-deletion,
 .hljs-shebang,
-.apache .hljs-sqbracket {
-  color: #e60415;
+.apache .hljs-sqbracket,
+.nginx .hljs-built_in,
+.tex .hljs-formula {
+  color: #802022;
 }
 
 .hljs-keyword,
@@ -90,15 +85,12 @@ pre{
 .vbscript .hljs-built_in,
 .rsl .hljs-built_in,
 .smalltalk .hljs-class,
-.xml .hljs-tag .hljs-title,
 .diff .hljs-header,
 .hljs-chunk,
 .hljs-winutils,
 .bash .hljs-variable,
 .apache .hljs-tag,
-.tex .hljs-command,
-.hljs-request,
-.hljs-status {
+.tex .hljs-command {
   font-weight: bold;
 }
 
@@ -109,5 +101,5 @@ pre{
 .xml .vbscript,
 .xml .css,
 .xml .hljs-cdata {
-  opacity: 0.5;
+  opacity: 0.8;
 }
