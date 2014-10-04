@@ -18,7 +18,7 @@ wellDefine('Views:Pages:AboutWell', function(app) {
     otherOption: 'paramValue'
   });
   // эта колбэк-функция вызовется при app.Module.get('Views:Pages:AboutWell');
-  this.export(function(args) {
+  this.exports(function(args) {
     // module code
     // all the dependencies are available here
   });
