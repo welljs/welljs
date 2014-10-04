@@ -1,4 +1,4 @@
-	//minimal fuctionality borrowed from Underscore.js
+	//a bit of functionality borrowed from Underscore.js
 	var Utils = function () {};
 	var nativeKeys = Object.keys;
 	var createCallback = function(func, context, argCount) {

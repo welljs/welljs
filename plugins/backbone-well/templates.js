@@ -1,5 +1,5 @@
 wellDefine('Plugins:BackboneWell:Templates', function (app) {
-	this.export(function () {
+	this.exports(function () {
 			//template api
 			function create (opts) {
 				return {

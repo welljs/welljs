@@ -1,5 +1,5 @@
 wellDefine('Views:Common:Sidebar', function (app) {
-	this.export(function () {
+	this.exports(function () {
 		return Backbone.View.extend({
 			initialize: function (options) {
 				this.docBody = $('html, body');

@@ -1,5 +1,5 @@
 wellDefine('Utils:HandlebarsHelpers', function (app) {
-	this.export(function () {
+	this.exports(function () {
 		Handlebars.registerHelper('url', function (route) {
 			if (route === '/')
 				route = '';

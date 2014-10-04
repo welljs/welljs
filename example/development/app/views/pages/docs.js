@@ -4,7 +4,7 @@ wellDefine('Views:Pages:Docs', function (app) {
 	this.options({
 		template: 'Pages:Docs'
 	});
-	this.export(function () {
+	this.exports(function () {
 		return app.Views.get('Views:Common:Page').extend({
 			render: function () {
 				this.sidebar = app.Views.initialize('Views:Partials:DocsSidebar', {

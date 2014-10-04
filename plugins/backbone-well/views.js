@@ -1,9 +1,10 @@
 wellDefine('Plugins:BackboneWell:Views', function (app) {
-	this.export(function(){
+	this.exports(function(){
 		var Controller = function () {
 			app.Events.on('ROUTER_PAGE_CHANGED', this.tryToRender, this);
-			app.Events.on('MODULE_DEFINED', this.onModuleDefined, this);
+			app.Modules.on('MODULE_DEFINED', this.onModuleDefined, this);
 		};
+		
 		_.extend(Controller.prototype, {
 			//initialized views
 			initialized: {},

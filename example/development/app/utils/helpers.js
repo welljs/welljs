@@ -1,5 +1,5 @@
 wellDefine('Utils:Helpers', function (app) {
-	this.export(function () {
+	this.exports(function () {
 		return {
 			translate: function () {
 

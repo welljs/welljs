@@ -1,5 +1,5 @@
 wellDefine('Plugins:BackboneWell:Collections', function (app) {
-	this.export(function () {
+	this.exports(function () {
 		var Controller = function () {};
 		_.extend(Controller.prototype, {
 			storage: {},

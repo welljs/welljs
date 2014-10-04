@@ -10,7 +10,7 @@ wellDefine('Strategy', function (app, undefined) {
 	this.use('Utils:HandlebarsHelpers');
 	this.use('Utils:Helpers');
 
-	this.export(function () {
+	this.exports(function () {
 
 		var WellSite = function () {
 			this.init();
@@ -23,6 +23,7 @@ wellDefine('Strategy', function (app, undefined) {
 			Modules.get('Vendor:BackboneWell')();
 			Modules.get('Vendor:HandlebarsWell')();
 			Modules.get('Vendor:HighlightPackWell')();
+			app.Events = _.extend(Backbone.Events, {});
 			app.Router = new (Modules.get('Plugins:BackboneWell:Router')());
 			app.Router.configure({
 				actions: {

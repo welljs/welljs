@@ -6,7 +6,7 @@ wellDefine('Well:Defaults:NotFound', function () {
 		type: 'view',
 		isDefault: true
 	});
-	this.export(function () {
+	this.exports(function () {
 		return Backbone.View.extend({
 			initialize: function () {
 

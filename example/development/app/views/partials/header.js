@@ -1,5 +1,5 @@
 wellDefine('Views:Partials:Header', function (app) {
-	this.export(function () {
+	this.exports(function () {
 		return Backbone.View.extend({
 			initialize: function (options) {
 				this.selectedItem = this.$('.active');

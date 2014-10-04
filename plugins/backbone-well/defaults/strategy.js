@@ -1,5 +1,5 @@
 wellDefine('Well:Defaults:Strategy', function (app) {
-	this.export(function () {
+	this.exports(function () {
 		app.Router.configure({
 			actions: {
 				'/': 'Well:Defaults:About',

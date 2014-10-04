@@ -6,7 +6,7 @@ wellDefine('Views:Layouts:Main', function (app) {
 			'Partials:Header'
 		]
 	});
-	this.export(function () {
+	this.exports(function () {
 		return Backbone.View.extend({
 			initialize: function (options) {
 				Handlebars.registerPartial('header', app.Templates.get('Partials:Header').render());

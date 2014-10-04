@@ -3,7 +3,7 @@ wellDefine('Views:Pages:NotFound', function (app) {
 	this.options({
 		template: 'Pages:NotFound'
 	});
-	this.export(function () {
+	this.exports(function () {
 		return app.Views.get('Views:Common:Page').extend({});
 	});
 });

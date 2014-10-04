@@ -3,7 +3,7 @@ wellDefine('Views:Pages:Installation', function (app) {
 	this.options({
 		template: 'Pages:Installation'
 	});
-	this.export(function () {
+	this.exports(function () {
 		return app.Views.get('Views:Common:Page').extend({});
 	});
 });

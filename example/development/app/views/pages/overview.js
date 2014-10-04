@@ -4,7 +4,7 @@ wellDefine('Views:Pages:Overview', function (app) {
 	this.options({
 		template: 'Pages:Overview'
 	});
-	this.export(function () {
+	this.exports(function () {
 		return app.Views.get('Views:Common:Page').extend({
 			render: function () {
 				this.$el.html(this.template.render());

@@ -5,7 +5,7 @@ wellDefine('Well:Defaults:Layout', function () {
 		template: ':Layout',
 		isDefault: true
 	});
-	this.export(function () {
+	this.exports(function () {
 		return Backbone.View.extend({
 			initialize: function () {
 			},

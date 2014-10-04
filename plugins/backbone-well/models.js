@@ -1,10 +1,10 @@
 wellDefine('Plugins:BackboneWell:Models', function (app) {
-	this.export(function () {
+	this.exports(function () {
 		var Controller = function () {
 			this.initialized ={};
 			this.modules = {};
 			this.config = {};
-			app.Events.on('MODULE_DEFINED', this.onModuleDefined, this);
+			app.Modules.on('MODULE_DEFINED', this.onModuleDefined, this);
 		};
 
 		Controller.prototype.onModuleDefined = function (module) {

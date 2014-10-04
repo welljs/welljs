@@ -1,5 +1,5 @@
 wellDefine('Plugins:BackboneWell:PageView', function (app) {
-	this.export(function (args) {
+	this.exports(function (args) {
 		var args = args  || {};
 		var basicView = args.extendedFrom || Backbone.View;
 		return basicView.extend({
