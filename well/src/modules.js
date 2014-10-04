@@ -51,6 +51,22 @@
 		return this;
 	};
 
+	//override this method to configure your AMD vendor
+	Modules.prototype.requireConfig = function () {
+		var options = this.app.options;
+		requirejs.config({
+			urlArgs: options.cache === false ? (new Date()).getTime() :  '',
+			waitSeconds: 60,
+			baseUrl: options.appRoot,
+			paths: {
+				well: options.wellRoot,
+				plugins: options.pluginsRoot,
+				vendor: options.vendorRoot
+			}
+		});
+		return this;
+	};
+
 	//override this method to setup your AMD vendor
 	Modules.prototype.vendorRequire = function (modules, next, err) {
 		//requirejs call
