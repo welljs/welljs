@@ -18,16 +18,11 @@ wellDefine('Plugins:BackboneWell:Views', function (app) {
 			},
 
 			get: function (viewName) {
-				return this.modules[viewName].exportFn();
+				return app.Modules.getModule(viewName).exportFn();
 			},
 
 			getModule: function (viewName) {
-				return this.modules[viewName];
-			},
-
-			set: function (module) {
-				this.modules[module.name] = module;
-				return this;
+				return app.Modules.getModule(viewName);
 			},
 
 			getConfigParam: function (name) {
@@ -50,10 +45,8 @@ wellDefine('Plugins:BackboneWell:Views', function (app) {
 			},
 
 			onModuleDefined: function (module) {
-				if (module.isView) {
+				if (module.isView)
 					this.complete(module);
-					this.set(module);
-				}
 			},
 
 			isCurrentLayout: function (viewName) {
