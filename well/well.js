@@ -488,12 +488,16 @@
 			this.Modules = new Modules(this);
 			if (!this.isProduction)
 				this.Modules.requireConfig();
+
+			if (!this.options.strategy)
+				return console.log('There is no application strategy defined');
+
 			var self = this;
 			this.Modules.require([this.options.strategy], function () {
 					self.Strategy = new(self.Modules.get(self.options.strategy));
 				},
 				function (err) {
-					console.log('Error in project loading! Can\'t find Welljs root', err);
+					console.log('Error in strategy loading! ', err);
 				});
 		},
 		transformToPath: function (name) {

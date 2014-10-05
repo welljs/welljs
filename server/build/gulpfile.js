@@ -1,4 +1,6 @@
 var app = {
+	vendorRoot: '../../vendor/',
+	wellRoot: '../../well/',
 	gulp: require('gulp'),
 	concat: require('gulp-concat'),
 	uglify: require('gulp-uglify'),
@@ -10,5 +12,7 @@ var app = {
 app.utils = require('./utils.js')(app);
 require('./gulp-wrap-vendor.js')(app);
 require('./gulp-build-well.js')(app);
+require('./gulp-uglify-vendor.js')(app);
+require('./gulp-uglify-well.js')(app);
 
 app.gulp.task('default', function () {});

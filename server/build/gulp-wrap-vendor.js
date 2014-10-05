@@ -13,5 +13,5 @@ module.exports = function (app) {
 				name: app.utils.transformToName('vendor/' + file.name + '-well')
 			});
 		});
-	});
+	})
 };
