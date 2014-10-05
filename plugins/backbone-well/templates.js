@@ -40,6 +40,13 @@ wellDefine('Plugins:BackboneWell:Templates', function (app) {
 					return this.storage[name];
 				},
 
+				registerPartial: function (opts) {
+					if (app.isProduction)
+						Handlebars.partials[opts.partialName] = Handlebars[app.transformToPath(opts.templateName)];
+					else
+						Handlebars.registerPartial(opts.partialName, opts.html);
+				},
+
 				isNotFound: function (name) {
 					return (name.indexOf('NotFound') !== -1 || name.indexOf('not-found') !== -1);
 				},
