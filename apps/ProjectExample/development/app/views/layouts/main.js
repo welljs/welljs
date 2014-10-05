@@ -9,7 +9,11 @@ wellDefine('Views:Layouts:Main', function (app) {
 	this.exports(function () {
 		return Backbone.View.extend({
 			initialize: function (options) {
-				Handlebars.registerPartial('header', app.Templates.get('Partials:Header').render());
+				app.Templates.registerPartial({
+					partialName: 'header',
+					templateName:'Partials:Header',
+					html: app.Templates.get('Partials:Header').render()
+				});
 				app.Events.on('PAGE_RENDERED', this.onPageRendered, this);
 			},
 			render: function () {

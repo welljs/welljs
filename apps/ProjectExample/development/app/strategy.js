@@ -57,7 +57,9 @@ wellDefine('Strategy', function (app, undefined) {
 			//initializing Handlebars helpers
 			new (Modules.get('Utils:HandlebarsHelpers'));
 
-			app.Router.start();
+			$(document).ready(function () {
+				app.Router.start();
+			})
 		};
 		return new WellSite();
 	});
