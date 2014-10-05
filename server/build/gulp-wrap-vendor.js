@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = function (app, opts) {
 	var gulp = app.gulp;
 	var fs = require('fs');
 	var _ = app._;
