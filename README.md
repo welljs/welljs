@@ -13,11 +13,11 @@ __Welljs__ - это, основанный на AMD (Asynchronous Module Definiti
 		window.WellConfig = {
 			strategy: 'Strategy',
 			appRoot: '/app',
-      cache: false,
-      appName: 'WellExample',
+			cache: false,
+			appName: 'WellExample',
 			wellRoot: '/well',
 			pluginsRoot: '/plugins',
-      vendorRoot: '/vendor'
+			vendorRoot: '/vendor'
 		};
 	</script>
     <script src="require.js"></script>
