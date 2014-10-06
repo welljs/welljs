@@ -1,5 +1,35 @@
 __Welljs__ - это, основанный на AMD (Asynchronous Module Definition), JavaScript-фреймворк предназначенный для развертывания и масштабирования клиентских приложений. Ключевая особенность - систематизированная работа с модулями и их зависимостями. В качестве AMD-движка Well использует [Require.js](http://requirejs.org/), но позволяет легко заменить его на любой другой.
 
+
+Такой будет index.html
+```html
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Welljs-example</title>
+    <link rel="stylesheet" href="/styles/css/main.css" type="text/css">
+	<script>
+		window.WellConfig = {
+			strategy: 'Strategy',
+			appRoot: '/app',
+      cache: false,
+      appName: 'WellExample',
+			wellRoot: '/well',
+			pluginsRoot: '/plugins',
+      vendorRoot: '/vendor'
+		};
+	</script>
+    <script src="require.js"></script>
+    <script src="/well/well.min.js"></script>
+</head>
+<body>
+  <div id="site-container"></div>
+</body>
+</html>
+```
+
+
 Так выглядит модуль  Well:
 
 ```JavaScript
