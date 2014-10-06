@@ -246,7 +246,8 @@
 			name: name,
 			deps: [],
 			config: {},
-			onCompleteFns: []
+			onCompleteFns: [],
+			isComplete: true
 		});
 		try {
 			fn.call(this, app);
@@ -310,10 +311,10 @@
 			// на продакше модули собраны в один файл.
 			// их не надо подгружать, нужно просто дождаться пока определятся нужные
 			if (this.app.isProduction) {
-				this.isComplete = true;
 				next(this);
 			}
 			else {
+				this.isComplete = false;
 				var Modules = this.app.Modules;
 				var deps = _.clone(Modules.findMissing(this.deps));
 				var self = this;
