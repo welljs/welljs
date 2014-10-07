@@ -1,10 +1,39 @@
-__Welljs__ - это, основанный на AMD (Asynchronous Module Definition), JavaScript-фреймворк предназначенный для развертывания и масштабирования клиентских приложений. Ключевая особенность - это систематизированная работа с модулями и их зависимостями. В качестве AMD-движка Well использует [Require.js](http://requirejs.org/), но позволяет легко заменить его на любой другой.
+__Welljs__ - это, основанный на AMD (Asynchronous Module Definition), JavaScript-фреймворк предназначенный для развертывания и масштабирования клиентских приложений. Ключевая особенность - систематизированная работа с модулями и их зависимостями. В качестве AMD-движка Well использует [Require.js](http://requirejs.org/), но позволяет легко заменить его на любой другой.
+
+
+Такой будет index.html
+```html
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Welljs-example</title>
+    <link rel="stylesheet" href="/styles/css/main.css" type="text/css">
+	<script>
+		window.WellConfig = {
+			strategy: 'Strategy',
+			appRoot: '/app',
+			appName: 'WellExample',
+			wellRoot: '/well',
+			pluginsRoot: '/plugins',
+			vendorRoot: '/vendor'
+		};
+	</script>
+    <script src="require.js"></script>
+    <script src="/well/well.min.js"></script>
+</head>
+<body>
+  <div id="site-container"></div>
+</body>
+</html>
+```
+
 
 Так выглядит модуль  Well:
 
 ```JavaScript
 // в любой модуль в качестве аргумента передается
-// ссылка на приложение
+// ссылка на приложени
 wellDefine('Views:Pages:AboutWell', function(app) {
   // зависимости можно подключать последовательно одна за другой, 
   // или цепочкой this.use().use().use().options().export();
@@ -21,6 +50,9 @@ wellDefine('Views:Pages:AboutWell', function(app) {
   this.exports(function(args) {
     // module code
     // all the dependencies are available here
+    return app.Modules.get('Views:Common:Page').extend({
+      //Backbone page view
+    });
   });
 });
 ```
@@ -60,21 +92,10 @@ var myModule = new MyModule({option: 'some option'});
 * __Система имен__ Наименования модулей соответсвуют их путям. Это позволяет легко разбираться в структуре проекта, а так же без проблема подключать модули написанные другими разработчиками.
 * __Поддержка AMD__ Из коробки Welljs подключает модули посредством Require.js, но дает возможность использовать другие библиотеки.
 * __Плагины__ Welljs дает разработчикам возможность писать собственные плагины и делиться ими через пакетный менеджер Bower.
-* __[Backbone-приложение](backbonejs.org)__ В комплект Well включены плагины Router, Views, Models, Collections, Templates, которые позволят быстро развернуть Backbone-приложение. [Пример на GitHub](https://github.com/welljs/welljs/tree/master/example/development)
+* __[Backbone-приложение](http://backbonejs.org)__ Через пакетный менеджер Bower можно скачать плагин [Sawbones](https://github.com/welljs/sawbones), который содержит все необходимое, для того чтобы быстро развернуть backbone-приложение.
+* __Библиотеки и стороние плагины__ Для того чтобы подключить стороннюю библиотеку к проекту, нужно только создать модуль и поместить ее в секцию `exports`. После этого она доступна как зависимость, и ее можно вызывать именно там где она нужна. 
 * __Фреймворки__ Если вы используете другой фреймворк, например Angular, можете написать плагины для работы с Angular 
 * __Приложения__ Структура Well позволяет создавать несколько приложений которые будут использовать одни и те же плагины и библиотеки. Нужно только [настроить](http://welljs.org/#installation/applications) Nginx
 * __Сборка__. Из коробки предлагается сборщик проекта для Gulp
 
 [Документация и пример к проекту](http://welljs.org/#documentation )
-
-###License
-
-MIT Licensed
-
-Copyright (c) 2014 Vitali Vorobiov vitalii.vorobiff@gmail.com
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
