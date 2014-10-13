@@ -1,7 +1,8 @@
 	var Main = function (options, undefined) {
 		this.isProduction = options.isProduction;
 		this.options = options;
-		window[this.options.appName || 'Well'] = this;
+		this.name = this.options.appName || 'WellApp';
+		window[this.name] = this;
 		//turn off amd support
 		if (typeof define === 'function' && define.amd)
 			define.amd = undefined;
