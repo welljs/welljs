@@ -245,7 +245,8 @@
 		};
 	};
 
-	var Module = function (name, fn, next, app) {
+var autoInits = [];
+var Module = function (name, fn, next, app) {
 		_.extend(this, {
 			app: app,
 			name: name,
@@ -265,7 +266,8 @@
 	};
 
 	_.extend(Module.prototype, {
-		use: function (module) {
+		use: function (module, autoInit) {
+			autoInit && autoInits.push(module);
 			this.deps.push(this._toFullName(module));
 			return this;
 		},
@@ -279,6 +281,11 @@
 
 		exports: function (fn) {
 			this.exportFn = fn;
+			var idx = autoInits.indexOf(this.name);
+			if (idx !== -1) {
+				autoInits.splice(idx, 1);
+				fn();
+			}
 			return this;
 		},
 
