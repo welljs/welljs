@@ -3,6 +3,11 @@
  	//a bit of functionality borrowed from Underscore.js
 	var Utils = function () {};
 	var nativeKeys = Object.keys;
+
+	var ObjProto = Object.prototype;
+	var hasOwnProperty =  ObjProto.hasOwnProperty;
+	var toString = ObjProto.toString;
+
 	var createCallback = function(func, context, argCount) {
 		if (context === void 0) return func;
 		switch (argCount == null ? 3 : argCount) {
