@@ -28,9 +28,9 @@
 		},
 
 		//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
-		findBy: function (criteria, value) {
+		findBy: function (option, value) {
 			return _.find(this.modules, function (module) {
-				return module.config[criteria] === value;
+				return module.options[option] === value;
 			}, this);
 		},
 

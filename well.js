@@ -251,7 +251,7 @@ var Module = function (name, fn, next, app) {
 			app: app,
 			name: name,
 			deps: [],
-			config: {},
+			options: {},
 			onCompleteFns: [],
 			isComplete: true
 		});
@@ -261,7 +261,7 @@ var Module = function (name, fn, next, app) {
 		catch (e) {
 			console.log('error in module: ' + name);
 		}
-		this._setType(this.config.type || name.split(':')[0]);
+		this._setType(this.options.type || name.split(':')[0]);
 		!this.deps.length ? next(this)	: this.waitForDeps(next);
 	};
 
@@ -275,7 +275,7 @@ var Module = function (name, fn, next, app) {
 		options: function (options) {
 			var opts = options || {};
 			opts.template = this._toFullName(opts.template);
-			this.config = opts;
+			this.options = opts;
 			return this;
 		},
 
@@ -290,7 +290,7 @@ var Module = function (name, fn, next, app) {
 		},
 
 		getOption: function (prop) {
-			return this.config[prop];
+			return this.options[prop];
 		},
 
 		_isShortHand: function (name) {
@@ -315,7 +315,7 @@ var Module = function (name, fn, next, app) {
 				case 'plugin': this.isPlugin = true; break;
 				case 'well': this.isCore = true; break;
 			}
-			this.config['type'] = type;
+			this.options['type'] = type;
 			return this;
 		},
 
@@ -408,9 +408,9 @@ var Module = function (name, fn, next, app) {
 		},
 
 		//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
-		findBy: function (criteria, value) {
+		findBy: function (option, value) {
 			return _.find(this.modules, function (module) {
-				return module.config[criteria] === value;
+				return module.options[option] === value;
 			}, this);
 		},
 
