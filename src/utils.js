@@ -183,4 +183,19 @@
 		return results;
 	};
 
+	Utils.prototype.merge = function () {
+		var res = [];
+		this.each(arguments, function (arg) {
+			var length = arg.length;
+			var i = -1;
+			var value;
+			while(++i < length) {
+				value = arg[i];
+				if (res.indexOf(value) === -1)
+					res.push(value);
+			}
+		});
+		return res;
+	};
+
 	var _ = _ ? _ : new Utils();

@@ -5,8 +5,8 @@ var Module = function (name, fn, next, app) {
 			name: name,
 			deps: [],
 			props: {},
-			onCompleteFns: [],
-			isComplete: true
+			isComplete: true,
+			exportFn: function(){}
 		});
 		try {
 			fn.call(this, app);

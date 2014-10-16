@@ -1,3 +1,19 @@
+	function initializeAutoInited(){
+		//меняю последовательность, чтобы удобно было удалять
+		var arr = autoInits.slice(0).reverse();
+		var i = autoInits.length;
+		var module;
+		while (--i >= 0) {
+			module = this.modules[arr[i]];
+			if (module) {
+				arr.splice(i, 1);
+				module.exportFn.call(window);
+			}
+		}
+		//то что осталось сохраняю и обратно меняю последовательность
+		autoInits = arr.slice(0).reverse();
+	}
+
 	var Queue = function (names, next, app) {
 		this.modules = {};
 		this.app = app;
@@ -7,14 +23,6 @@
 	};
 
 	_.extend(Queue.prototype, {
-		_initializeAutoinited: function () {
-			_.each(autoInits, function (moduleName) {
-				var fn = this.app.Modules.get(moduleName);
-				if (_.isFunction(fn))
-					fn();
-			}, this);
-		},
-
 		isQueueEmpty: function () {
 			return !this.names.length;
 		},
@@ -34,7 +42,7 @@
 				//формирую список модулей и их зависимостей
 				var exportList =_.extend(this.modules, app.Modules.getDeps(this.modules));
 				//колбэк самого первого уровня вложенности (относительно очереди)
-				this._initializeAutoinited();
+				initializeAutoInited.call(this);
 				this.next(undefined, exportList);
 			}
 			return this;
