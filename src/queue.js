@@ -7,27 +7,41 @@
 	};
 
 	_.extend(Queue.prototype, {
-		onModuleDefined: function (module) {
+		_initializeAutoinited: function () {
+			_.each(autoInits, function (moduleName) {
+				var fn = this.app.Modules.get(moduleName);
+				if (_.isFunction(fn))
+					fn();
+			}, this);
+		},
+
+		isQueueEmpty: function () {
+			return !this.names.length;
+		},
+
+		onModuleDefined: function (module, undefined) {
 			//если модуль из этой очереди, то удалить его из очереди
-			if (this.exist(module.name)) {
-				this.modules[module.name] = module;
-				this.names.splice(this.names.indexOf(module.name), 1);
-			}
+			if (!this.isModuleFromThisQueue(module.name))
+				return;
+
+			this.modules[module.name] = module;
+			this.names.splice(this.names.indexOf(module.name), 1);
 
 			//когда все модули загружены
-			if (!this.names.length) {
+			if (this.isQueueEmpty()) {
 				var app = this.app;
 				app.Modules.off('MODULE_DEFINED', this.onModuleDefined, this);
 				//формирую список модулей и их зависимостей
 				var exportList =_.extend(this.modules, app.Modules.getDeps(this.modules));
 				//колбэк самого первого уровня вложенности (относительно очереди)
-				this.next(exportList, this);
+				this._initializeAutoinited();
+				this.next(undefined, exportList);
 			}
 			return this;
 		},
 
-		exist: function (moduleName) {
-			return _.find(this.names, function (module) {
+		isModuleFromThisQueue: function (moduleName) {
+			return !!_.find(this.names, function (module) {
 				return module === moduleName;
 			});
 		}

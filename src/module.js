@@ -4,7 +4,7 @@ var Module = function (name, fn, next, app) {
 			app: app,
 			name: name,
 			deps: [],
-			options: {},
+			props: {},
 			onCompleteFns: [],
 			isComplete: true
 		});
@@ -14,7 +14,7 @@ var Module = function (name, fn, next, app) {
 		catch (e) {
 			console.log('error in module: ' + name);
 		}
-		this._setType(this.options.type || name.split(':')[0]);
+		this._setType(this.props.type || name.split(':')[0]);
 		!this.deps.length ? next(this)	: this.waitForDeps(next);
 	};
 
@@ -28,22 +28,17 @@ var Module = function (name, fn, next, app) {
 		options: function (options) {
 			var opts = options || {};
 			opts.template = this._toFullName(opts.template);
-			this.options = opts;
+			this.props = opts;
 			return this;
 		},
 
 		exports: function (fn) {
 			this.exportFn = fn;
-			var idx = autoInits.indexOf(this.name);
-			if (idx !== -1) {
-				autoInits.splice(idx, 1);
-				fn();
-			}
 			return this;
 		},
 
 		getOption: function (prop) {
-			return this.options[prop];
+			return this.props[prop];
 		},
 
 		_isShortHand: function (name) {
@@ -68,7 +63,7 @@ var Module = function (name, fn, next, app) {
 				case 'plugin': this.isPlugin = true; break;
 				case 'well': this.isCore = true; break;
 			}
-			this.options['type'] = type;
+			this.props['type'] = type;
 			return this;
 		},
 
@@ -84,10 +79,10 @@ var Module = function (name, fn, next, app) {
 				var deps = _.clone(Modules.findMissing(this.deps));
 				var self = this;
 				//на девелопменте разобраны по файлам и их надо подгружать
-				Modules.require(this.deps, function () {
+				Modules.require(this.deps, function (err, modules) {
+					if (err)
+						return console.log('Error in deps requiring...', err);
 					next(self);
-				}, function (err) {
-					console.log('Error in deps requiring...', err);
 				});
 			}
 			return this;

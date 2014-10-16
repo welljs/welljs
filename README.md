@@ -14,7 +14,6 @@ __Welljs__ - это, основанный на AMD (Asynchronous Module Definiti
 			strategy: 'Strategy',
 			appRoot: '/app',
 			appName: 'WellExample',
-			wellRoot: '/well',
 			pluginsRoot: '/plugins',
 			vendorRoot: '/vendor'
 		};

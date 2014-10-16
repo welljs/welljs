@@ -30,16 +30,23 @@
 		//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
 		findBy: function (option, value) {
 			return _.find(this.modules, function (module) {
-				return module.options[option] === value;
+				return module.props[option] === value;
+			}, this);
+		},
+
+		filterBy: function (option, value) {
+			if (!option || !value) return;
+			return _.filter(this.modules, function (module) {
+				return module.props[option] === value;
 			}, this);
 		},
 
 		//AMD provider wrapper
-		require: function (modules, next, err) {
+		require: function (modules, next, undefined) {
 			var missing = this.findMissing(modules);
 			//если модули уже загружены - вызов
 			if (!missing.length)
-				return next(this.pack(modules));
+				return next(undefined,this.pack(modules));
 
 			new Queue(_.clone(missing), next, this.app);
 
@@ -47,14 +54,15 @@
 				missing = _.map(missing, function (moduleName) {
 					return this.app.transformToPath(moduleName);
 				}, this);
-				this.vendorRequire(missing, function(){}, err);
+				this.vendorRequire(missing, function(){}, function (err) {
+					next(err);
+				});
 			}
 			return this;
 		},
 
 		//override this method to configure your AMD vendor
-		requireConfig: function () {
-			var options = this.app.options;
+		requireConfig: function (options) {
 			requirejs.config({
 				urlArgs: options.cache === false ? (new Date()).getTime() :  '',
 				waitSeconds: 60,

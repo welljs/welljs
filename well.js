@@ -251,7 +251,7 @@ var Module = function (name, fn, next, app) {
 			app: app,
 			name: name,
 			deps: [],
-			options: {},
+			props: {},
 			onCompleteFns: [],
 			isComplete: true
 		});
@@ -261,7 +261,7 @@ var Module = function (name, fn, next, app) {
 		catch (e) {
 			console.log('error in module: ' + name);
 		}
-		this._setType(this.options.type || name.split(':')[0]);
+		this._setType(this.props.type || name.split(':')[0]);
 		!this.deps.length ? next(this)	: this.waitForDeps(next);
 	};
 
@@ -275,22 +275,17 @@ var Module = function (name, fn, next, app) {
 		options: function (options) {
 			var opts = options || {};
 			opts.template = this._toFullName(opts.template);
-			this.options = opts;
+			this.props = opts;
 			return this;
 		},
 
 		exports: function (fn) {
 			this.exportFn = fn;
-			var idx = autoInits.indexOf(this.name);
-			if (idx !== -1) {
-				autoInits.splice(idx, 1);
-				fn();
-			}
 			return this;
 		},
 
 		getOption: function (prop) {
-			return this.options[prop];
+			return this.props[prop];
 		},
 
 		_isShortHand: function (name) {
@@ -315,7 +310,7 @@ var Module = function (name, fn, next, app) {
 				case 'plugin': this.isPlugin = true; break;
 				case 'well': this.isCore = true; break;
 			}
-			this.options['type'] = type;
+			this.props['type'] = type;
 			return this;
 		},
 
@@ -331,10 +326,10 @@ var Module = function (name, fn, next, app) {
 				var deps = _.clone(Modules.findMissing(this.deps));
 				var self = this;
 				//на девелопменте разобраны по файлам и их надо подгружать
-				Modules.require(this.deps, function () {
+				Modules.require(this.deps, function (err, modules) {
+					if (err)
+						return console.log('Error in deps requiring...', err);
 					next(self);
-				}, function (err) {
-					console.log('Error in deps requiring...', err);
 				});
 			}
 			return this;
@@ -351,27 +346,41 @@ var Module = function (name, fn, next, app) {
 	};
 
 	_.extend(Queue.prototype, {
-		onModuleDefined: function (module) {
+		_initializeAutoinited: function () {
+			_.each(autoInits, function (moduleName) {
+				var fn = this.app.Modules.get(moduleName);
+				if (_.isFunction(fn))
+					fn();
+			}, this);
+		},
+
+		isQueueEmpty: function () {
+			return !this.names.length;
+		},
+
+		onModuleDefined: function (module, undefined) {
 			//если модуль из этой очереди, то удалить его из очереди
-			if (this.exist(module.name)) {
-				this.modules[module.name] = module;
-				this.names.splice(this.names.indexOf(module.name), 1);
-			}
+			if (!this.isModuleFromThisQueue(module.name))
+				return;
+
+			this.modules[module.name] = module;
+			this.names.splice(this.names.indexOf(module.name), 1);
 
 			//когда все модули загружены
-			if (!this.names.length) {
+			if (this.isQueueEmpty()) {
 				var app = this.app;
 				app.Modules.off('MODULE_DEFINED', this.onModuleDefined, this);
 				//формирую список модулей и их зависимостей
 				var exportList =_.extend(this.modules, app.Modules.getDeps(this.modules));
 				//колбэк самого первого уровня вложенности (относительно очереди)
-				this.next(exportList, this);
+				this._initializeAutoinited();
+				this.next(undefined, exportList);
 			}
 			return this;
 		},
 
-		exist: function (moduleName) {
-			return _.find(this.names, function (module) {
+		isModuleFromThisQueue: function (moduleName) {
+			return !!_.find(this.names, function (module) {
 				return module === moduleName;
 			});
 		}
@@ -410,16 +419,23 @@ var Module = function (name, fn, next, app) {
 		//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
 		findBy: function (option, value) {
 			return _.find(this.modules, function (module) {
-				return module.options[option] === value;
+				return module.props[option] === value;
+			}, this);
+		},
+
+		filterBy: function (option, value) {
+			if (!option || !value) return;
+			return _.filter(this.modules, function (module) {
+				return module.props[option] === value;
 			}, this);
 		},
 
 		//AMD provider wrapper
-		require: function (modules, next, err) {
+		require: function (modules, next, undefined) {
 			var missing = this.findMissing(modules);
 			//если модули уже загружены - вызов
 			if (!missing.length)
-				return next(this.pack(modules));
+				return next(undefined,this.pack(modules));
 
 			new Queue(_.clone(missing), next, this.app);
 
@@ -427,14 +443,15 @@ var Module = function (name, fn, next, app) {
 				missing = _.map(missing, function (moduleName) {
 					return this.app.transformToPath(moduleName);
 				}, this);
-				this.vendorRequire(missing, function(){}, err);
+				this.vendorRequire(missing, function(){}, function (err) {
+					next(err);
+				});
 			}
 			return this;
 		},
 
 		//override this method to configure your AMD vendor
-		requireConfig: function () {
-			var options = this.app.options;
+		requireConfig: function (options) {
 			requirejs.config({
 				urlArgs: options.cache === false ? (new Date()).getTime() :  '',
 				waitSeconds: 60,
@@ -500,20 +517,25 @@ var Module = function (name, fn, next, app) {
 
 	_.extend(Main.prototype, {
 		init: function () {
+			var options = this.options;
+			if (_.isFunction(options.vendorRequire))
+				Module.prototype.vendorRequire = options.vendorRequire;
+			if (_.isFunction(options.requireConfig))
+				Module.prototype.requireConfig = options.requireConfig;
+
 			this.Modules = new Modules(this);
 			if (!this.isProduction)
-				this.Modules.requireConfig();
+				this.Modules.requireConfig(options);
 
-			if (!this.options.strategy)
+			if (!options.strategy)
 				return console.log('There is no application strategy defined');
 
 			var self = this;
-			this.Modules.require([this.options.strategy], function () {
-					self.Strategy = new(self.Modules.get(self.options.strategy));
-				},
-				function (err) {
-					console.log('Error in strategy loading! ', err);
-				});
+			this.Modules.require([options.strategy], function (err) {
+				if (err)
+					return console.log('Error in strategy loading! ', err);
+				self.Strategy = new(self.Modules.get(options.strategy));
+			});
 		},
 		transformToPath: function (name) {
 			return name ? name.split(/(?=[A-Z])/).join('-').toLowerCase().split(':-').join('/') : name;
