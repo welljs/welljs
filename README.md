@@ -70,12 +70,12 @@ app.Modules.require([
     'Full:ModuleName:Bar', 
     'Full:ModuleName:Baz'
   ],
-  function (modules) {
+  function (err, modules) {
+    if (err)
+      throw err;
+      
     // выполняется при удачной загрузке модулей
     // modules - загруженные модули
-  },
-  function(err) {
-    //error handler
   }
 );
 ```
