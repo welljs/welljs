@@ -1,33 +1,5 @@
 __Welljs__ - это, основанный на AMD (Asynchronous Module Definition), JavaScript-фреймворк предназначенный для развертывания и масштабирования клиентских приложений. Ключевая особенность - систематизированная работа с модулями и их зависимостями. В качестве AMD-движка Well использует [Require.js](http://requirejs.org/), но позволяет легко заменить его на любой другой.
 
-
-Такой будет index.html
-```html
-<!DOCTYPE html>
-<html>
-<head lang="en">
-	<meta charset="UTF-8">
-	<title>Welljs-example</title>
-    <link rel="stylesheet" href="/styles/css/main.css" type="text/css">
-	<script>
-		window.WellConfig = {
-			strategy: 'Strategy',
-			appRoot: '/app',
-			appName: 'WellExample',
-			pluginsRoot: '/plugins',
-			vendorRoot: '/vendor'
-		};
-	</script>
-    <script src="require.js"></script>
-    <script src="/well/well.min.js"></script>
-</head>
-<body>
-  <div id="site-container"></div>
-</body>
-</html>
-```
-
-
 Так выглядит модуль  Well:
 
 ```JavaScript
@@ -36,9 +8,10 @@ __Welljs__ - это, основанный на AMD (Asynchronous Module Definiti
 wellDefine('Views:Pages:AboutWell', function(app) {
   // зависимости можно подключать последовательно одна за другой, 
   // или цепочкой this.use().use().use().options().export();
-  this.use('Views:Common:Page');
+  this.use('Views:Basic:Page');
   this.use('Views:Partials:Sidebar');
-  this.use('Plugins:VendorName:PluginName');
+  //add true to autoInit module, when it'll be loaded
+  this.use('Vendor:CodeHiglighter:Hightlighter', true);
   // тут хранятся дополнительные параметы, к которым можно обратиться 
   // через someModule.getOption('paramName')
   this.options({
@@ -73,7 +46,6 @@ app.Modules.require([
   function (err, modules) {
     if (err)
       throw err;
-      
     // выполняется при удачной загрузке модулей
     // modules - загруженные модули
   }
@@ -91,10 +63,7 @@ var myModule = new MyModule({option: 'some option'});
 * __Система имен__ Наименования модулей соответсвуют их путям. Это позволяет легко разбираться в структуре проекта, а так же без проблема подключать модули написанные другими разработчиками.
 * __Поддержка AMD__ Из коробки Welljs подключает модули посредством Require.js, но дает возможность использовать другие библиотеки.
 * __Плагины__ Welljs дает разработчикам возможность писать собственные плагины и делиться ими через пакетный менеджер Bower.
-* __[Backbone-приложение](http://backbonejs.org)__ Через пакетный менеджер Bower можно скачать плагин [Sawbones](https://github.com/welljs/sawbones), который содержит все необходимое, для того чтобы быстро развернуть backbone-приложение.
 * __Библиотеки и стороние плагины__ Для того чтобы подключить стороннюю библиотеку к проекту, нужно только создать модуль и поместить ее в секцию `exports`. После этого она доступна как зависимость, и ее можно вызывать именно там где она нужна. 
-* __Фреймворки__ Если вы используете другой фреймворк, например Angular, можете написать плагины для работы с Angular 
-* __Приложения__ Структура Well позволяет создавать несколько приложений которые будут использовать одни и те же плагины и библиотеки. Нужно только [настроить](http://welljs.org/#installation/applications) Nginx
-* __Сборка__. Из коробки предлагается сборщик проекта для Gulp
+
 
 [Документация и пример к проекту](http://welljs.org/#documentation )
