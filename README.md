@@ -1,33 +1,5 @@
 __Welljs__ - это, основанный на AMD (Asynchronous Module Definition), JavaScript-фреймворк предназначенный для развертывания и масштабирования клиентских приложений. Ключевая особенность - систематизированная работа с модулями и их зависимостями. В качестве AMD-движка Well использует [Require.js](http://requirejs.org/), но позволяет легко заменить его на любой другой.
 
-
-Такой будет index.html
-```html
-<!DOCTYPE html>
-<html>
-<head lang="en">
-	<meta charset="UTF-8">
-	<title>Welljs-example</title>
-    <link rel="stylesheet" href="/styles/css/main.css" type="text/css">
-	<script>
-		window.WellConfig = {
-			strategy: 'Strategy',
-			appRoot: '/app',
-			appName: 'WellExample',
-			pluginsRoot: '/plugins',
-			vendorRoot: '/vendor'
-		};
-	</script>
-    <script src="require.js"></script>
-    <script src="/well/well.min.js"></script>
-</head>
-<body>
-  <div id="site-container"></div>
-</body>
-</html>
-```
-
-
 Так выглядит модуль  Well:
 
 ```JavaScript
@@ -61,7 +33,16 @@ wellDefine('Views:Pages:AboutWell', function(app) {
 Если у модуля есть зависимости, они указываются через `this.use('Path:To:DependencyModule')`. Если зависимый модуль находится в той же директории что и исходный, то его можно указать кратко: `this.use(':DependencyModule')` 
 
 ###Применение
-Модули загружаются следующим образом:
+Загрузить модули можно двумя способами:
+
+1) Объявить его в секции `use()` как зависимость
+```javascript
+wellDefine('SomeModule', function(){
+  this.use('SomeOtherModule');
+});
+```
+
+2) Через метод `Modules.require()` в любом месте программы
 ```javascript
 // app - неймспес приложения. доступен везде
 // Modules - контроллер модулей
@@ -70,17 +51,16 @@ app.Modules.require([
     'Full:ModuleName:Bar', 
     'Full:ModuleName:Baz'
   ],
-  function (modules) {
+  function (err, modules) {
+    if (err)
+      throw err;
     // выполняется при удачной загрузке модулей
     // modules - загруженные модули
-  },
-  function(err) {
-    //error handler
   }
 );
 ```
 
-Так вызываются:
+После загрузки можно использовать:
 ```javascript
 var MyModule = app.Modules.get('Foo:Bar:MyModule');
 var myModule = new MyModule({option: 'some option'});
@@ -91,10 +71,7 @@ var myModule = new MyModule({option: 'some option'});
 * __Система имен__ Наименования модулей соответсвуют их путям. Это позволяет легко разбираться в структуре проекта, а так же без проблема подключать модули написанные другими разработчиками.
 * __Поддержка AMD__ Из коробки Welljs подключает модули посредством Require.js, но дает возможность использовать другие библиотеки.
 * __Плагины__ Welljs дает разработчикам возможность писать собственные плагины и делиться ими через пакетный менеджер Bower.
-* __[Backbone-приложение](http://backbonejs.org)__ Через пакетный менеджер Bower можно скачать плагин [Sawbones](https://github.com/welljs/sawbones), который содержит все необходимое, для того чтобы быстро развернуть backbone-приложение.
 * __Библиотеки и стороние плагины__ Для того чтобы подключить стороннюю библиотеку к проекту, нужно только создать модуль и поместить ее в секцию `exports`. После этого она доступна как зависимость, и ее можно вызывать именно там где она нужна. 
-* __Фреймворки__ Если вы используете другой фреймворк, например Angular, можете написать плагины для работы с Angular 
-* __Приложения__ Структура Well позволяет создавать несколько приложений которые будут использовать одни и те же плагины и библиотеки. Нужно только [настроить](http://welljs.org/#installation/applications) Nginx
-* __Сборка__. Из коробки предлагается сборщик проекта для Gulp
+
 
 [Документация и пример к проекту](http://welljs.org/#documentation )
