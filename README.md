@@ -8,10 +8,9 @@ __Welljs__ - это, основанный на AMD (Asynchronous Module Definiti
 wellDefine('Views:Pages:AboutWell', function(app) {
   // зависимости можно подключать последовательно одна за другой, 
   // или цепочкой this.use().use().use().options().export();
-  this.use('Views:Basic:Page');
+  this.use('Views:Common:Page');
   this.use('Views:Partials:Sidebar');
-  //add true to autoInit module, when it'll be loaded
-  this.use('Vendor:CodeHiglighter:Hightlighter', true);
+  this.use('Plugins:VendorName:PluginName');
   // тут хранятся дополнительные параметы, к которым можно обратиться 
   // через someModule.getOption('paramName')
   this.options({
@@ -34,7 +33,16 @@ wellDefine('Views:Pages:AboutWell', function(app) {
 Если у модуля есть зависимости, они указываются через `this.use('Path:To:DependencyModule')`. Если зависимый модуль находится в той же директории что и исходный, то его можно указать кратко: `this.use(':DependencyModule')` 
 
 ###Применение
-Модули загружаются следующим образом:
+Загрузить модули можно двумя способами:
+
+1) Объявить его в секции `use()` как зависимость
+```javascript
+wellDefine('SomeModule', function(){
+  this.use('SomeOtherModule');
+});
+```
+
+2) Через метод `Modules.require()` в любом месте программы
 ```javascript
 // app - неймспес приложения. доступен везде
 // Modules - контроллер модулей
@@ -52,7 +60,7 @@ app.Modules.require([
 );
 ```
 
-Так вызываются:
+После загрузки можно использовать:
 ```javascript
 var MyModule = app.Modules.get('Foo:Bar:MyModule');
 var myModule = new MyModule({option: 'some option'});
