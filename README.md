@@ -22,7 +22,7 @@ wellDefine('Views:Pages:AboutWell', function(app) {
   this.exports(function(args) {
     // module code
     // all the dependencies are available here
-    return app.Modules.get('Views:Common:Page').extend({
+    return app.Modules.get('Views:Basic:Page').extend({
       //Backbone page view
     });
   });
