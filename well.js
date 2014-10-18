@@ -268,7 +268,7 @@ var Module = function (name, fn, next, app) {
 			deps: [],
 			props: {},
 			isComplete: true,
-			exportFn: function(){}
+			exportsFn: function(){}
 		});
 		try {
 			fn.call(this, app);
@@ -295,7 +295,7 @@ var Module = function (name, fn, next, app) {
 		},
 
 		exports: function (fn) {
-			this.exportFn = fn;
+			this.exportsFn = fn;
 			return this;
 		},
 
@@ -361,7 +361,7 @@ var Module = function (name, fn, next, app) {
 			module = this.modules[arr[i]];
 			if (module) {
 				arr.splice(i, 1);
-				module.exportFn.call(window);
+				module.exportsFn.call(window);
 			}
 		}
 		//то что осталось сохраняю и обратно меняю последовательность
@@ -418,7 +418,7 @@ var Module = function (name, fn, next, app) {
 
 	_.extend(Modules.prototype, EventsController(), {
 		get: function (name) {
-			return this.modules[name].exportFn;
+			return this.modules[name].exportsFn;
 		},
 
 		getModule: function (name) {

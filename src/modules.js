@@ -6,7 +6,7 @@
 
 	_.extend(Modules.prototype, EventsController(), {
 		get: function (name) {
-			return this.modules[name].exportFn;
+			return this.modules[name].exportsFn;
 		},
 
 		getModule: function (name) {

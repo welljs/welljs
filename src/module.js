@@ -6,7 +6,7 @@ var Module = function (name, fn, next, app) {
 			deps: [],
 			props: {},
 			isComplete: true,
-			exportFn: function(){}
+			exportsFn: function(){}
 		});
 		try {
 			fn.call(this, app);
@@ -33,7 +33,7 @@ var Module = function (name, fn, next, app) {
 		},
 
 		exports: function (fn) {
-			this.exportFn = fn;
+			this.exportsFn = fn;
 			return this;
 		},
 
