@@ -7,7 +7,7 @@
 			module = this.modules[arr[i]];
 			if (module) {
 				arr.splice(i, 1);
-				module.exportsFn.call(window);
+				module.exportsFn.call(module);
 			}
 		}
 		//то что осталось сохраняю и обратно меняю последовательность

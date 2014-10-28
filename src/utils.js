@@ -5,6 +5,7 @@
 	var ObjProto = Object.prototype;
 	var hasOwnProperty =  ObjProto.hasOwnProperty;
 	var toString = ObjProto.toString;
+	var nativeBind = Function.prototype.bind;
 
 	var createCallback = function(func, context, argCount) {
 		if (context === void 0) return func;
@@ -196,6 +197,16 @@
 			}
 		});
 		return res;
+	};
+
+	Utils.prototype.parseName = function (moduleName) {
+		var t = moduleName.split(':');
+		var name = t[t.length - 1];
+		t.splice(-1, 1);
+		return {
+			alias: t.join(':'),
+			name: name
+		};
 	};
 
 	var _ = _ ? _ : new Utils();

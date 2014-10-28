@@ -106,12 +106,10 @@
 			var res = {};
 			_.each(modules, function (module) {
 				_.each(module.deps, function (dep) {
-					res[dep] = this.getModule(dep);
+					res[dep] = this.getModule(dep.name);
 				}, this)
 			}, this);
 			return res;
 		}
 
 	});
-
-	window.WellModuleModules = Modules;
