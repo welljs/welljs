@@ -1,7 +1,6 @@
-var autoInits = [];
-var Module = function (name, fn, next, app) {
+//var autoInits = [];
+var Module = function (name, fn, next) {
 		_.extend(this, {
-			app: app,
 			name: name,
 			deps: [],
 			options: {},
@@ -9,12 +8,12 @@ var Module = function (name, fn, next, app) {
 			exportsFn: function(){}
 		});
 		try {
-			fn.call(this, app, app.Modules);
+			fn.call(this, app, modulesController);
 		}
 		catch (e) {
 			console.log('error in module: ' + name);
 		}
-		this._setType(this.options.type || name.split(':')[0]);
+//		this._setType(this.options.type || name.split(':')[0]);
 		!this.deps.length ? next(this)	: this.waitForDeps(next);
 	};
 
@@ -23,8 +22,12 @@ var Module = function (name, fn, next, app) {
 			var self = this;
 			options = options || {};
 			if (options.autoInit) {
-				autoInits.push(moduleName);
-				this._closeInitHandler('MODULE_AUTO_INIT:'+this._toFullName(moduleName), options.as || _.parseName(this._toFullName(moduleName)).name)
+				var as = options.as || _.parseName(this._toFullName(moduleName)).name;
+				var o={};
+				AutoInits.add((o[this.name] = {name: moduleName, as: as}));
+
+//				autoInits.push(moduleName);
+//				this._closeInitHandler('MODULE_AUTO_INIT:'+this._toFullName(moduleName), options.as || _.parseName(this._toFullName(moduleName)).name)
 			}
 			this.deps.push({name: this._toFullName(moduleName), options: options});
 			return this;
@@ -71,64 +74,58 @@ var Module = function (name, fn, next, app) {
 			return	t.join(':') + name;
 		},
 
-		_setType: function (type) {
-			if (type.substr(-1) === 's')
-				type = type.slice(0, -1);
-			switch (type.toLowerCase()) {
-				case 'view': this.isView = true; break;
-				case 'model': this.isModel = true; break;
-				case 'collection': this.isCollection = true; break;
-				case 'plugin': this.isPlugin = true; break;
-				case 'well': this.isCore = true; break;
-			}
-			this.options['type'] = type;
-			return this;
-		},
+//		_setType: function (type) {
+//			if (type.substr(-1) === 's')
+//				type = type.slice(0, -1);
+//			switch (type.toLowerCase()) {
+//				case 'view': this.isView = true; break;
+//				case 'model': this.isModel = true; break;
+//				case 'collection': this.isCollection = true; break;
+//				case 'plugin': this.isPlugin = true; break;
+//				case 'well': this.isCore = true; break;
+//			}
+//			this.options['type'] = type;
+//			return this;
+//		},
 
-		_closeInitHandler: function (event, prop) {
-			var modules = this.app.Modules;
-			var self = this;
-			modules.on(event, function (module) {
-				self[prop] = module.init();
-				modules.off(event, null, self);
-			}, this);
-		},
-
-		_defineDeps: function () {
-			return;
-			var modules = this.app.Modules;
-			var prop;
-			var event;
-			var self = this;
-			_.each(this.deps, function (dependency) {
-				prop = dependency.options.as || _.parseName(dependency.name).name;
-				this[prop] = modules.get(dependency.name);
-				if (dependency.options.autoInit) {
-					this._closeInitHandler('MODULE_AUTO_INIT:' + dependency.name, prop);
-				}
-			}, this)
-		},
+//		_closeInitHandler: function (event, prop) {
+//			var self = this;
+//			modulesController.on(event, function (module) {
+//				self[prop] = module.init();
+//				modulesController.off(event, null, self);
+//			}, this);
+//		},
+//
+//		_defineDeps: function () {
+//			var self = this;
+//			_.each(this.deps, function (dependency) {
+//				var prop = dependency.options.as || _.parseName(dependency.name).name;
+//				this[prop] = modulesController.get(dependency.name);
+//				if (dependency.options.autoInit) {
+//					this._closeInitHandler('MODULE_AUTO_INIT:' + dependency.name, prop);
+//				}
+//			}, this)
+//		},
 
 		waitForDeps: function (next) {
 			// на продакше модули собраны в один файл.
 			// их не надо подгружать, нужно просто дождаться пока определятся нужные
-			if (this.app.isProduction) {
-				this._defineDeps();
+			if (app.isProduction) {
+//				this._defineDeps();
 				next(this);
 			}
 			else {
 				this.isComplete = false;
-				var Modules = this.app.Modules;
 				var depsNames = _.map(this.deps, function (dep) {
 					return dep.name;
 				});
-				var deps = _.clone(Modules.findMissing(depsNames));
+				var deps = _.clone(modulesController.findMissing(depsNames));
 				var self = this;
 				//на девелопменте разобраны по файлам и их надо подгружать
-				Modules.require(depsNames, function (err, modules) {
+				modulesController.require(depsNames, function (err, modules) {
 					if (err)
 						return console.log('Error in deps requiring...', err);
-					self._defineDeps();
+//					self._defineDeps();
 					next(self);
 				});
 			}

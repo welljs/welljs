@@ -1,30 +1,13 @@
-	var Modules = function(mainApp){
-		this.app = mainApp;
-		this.modules = {};
-		this.init();
-	};
+	var Modules = function(mainApp) {};
 
 	_.extend(Modules.prototype, EventsController(), {
+		modules: {},
 		get: function (name) {
 			return this.modules[name].exportsFn;
 		},
 
 		getModule: function (name) {
 			return this.modules[name];
-		},
-
-		define: function (moduleName, fn) {
-			var self = this;
-			new Module(moduleName, fn, function (module) {
-				self.modules[moduleName] = module;
-				self.trigger('MODULE_DEFINED', module);
-			}, this.app);
-			return this;
-		},
-
-		init: function () {
-			window.wellDefine = this.define.bind(this);
-			return this;
 		},
 
 		//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
@@ -43,49 +26,12 @@
 
 		//AMD provider wrapper
 		require: function (modules, next, undefined) {
-			var missing = this.findMissing(modules);
-			//если модули уже загружены - вызов
-			if (!missing.length)
-				return next(undefined,this.pack(modules));
-
-			new Queue(_.clone(missing), next, this.app);
-
-			if (!this.app.isProduction) {
-				missing = _.map(missing, function (moduleName) {
-					return this.app.transformToPath(moduleName);
-				}, this);
-				this.vendorRequire(missing, function(){}, function (err) {
-					next(err);
-				});
-			}
+			new Queue(modules, next);
 			return this;
-		},
-
-		//override this method to configure your AMD vendor
-		requireConfig: function (options) {
-			requirejs.config({
-				urlArgs: options.cache === false ? (new Date()).getTime() :  '',
-				waitSeconds: 60,
-				baseUrl: options.appRoot,
-				paths: {
-					well: options.wellRoot,
-					plugins: options.pluginsRoot,
-					vendor: options.vendorRoot
-				}
-			});
-			return this;
-		},
-
-		//override this method to setup your AMD vendor
-		vendorRequire: function (modules, next, err) {
-			//requirejs call
-			require(modules, next, err);
 		},
 
 		exist: function (moduleName) {
-			return _.find(this.modules, function (module) {
-				return module.name === moduleName;
-			}, this);
+			return !!this.modules[moduleName];
 		},
 
 		findMissing: function (list) {

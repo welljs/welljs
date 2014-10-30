@@ -1,6 +1,8 @@
 (function(){
 	 'use strict'; 
- 	//a bit of functionality borrowed from Underscore.js
+ 	var app;
+	var modulesController;
+	//a bit of functionality borrowed from Underscore.js
 	var Utils = function () {};
 	var nativeKeys = Object.keys;
 
@@ -271,10 +273,9 @@
 		};
 	};
 
-var autoInits = [];
-var Module = function (name, fn, next, app) {
+//var autoInits = [];
+var Module = function (name, fn, next) {
 		_.extend(this, {
-			app: app,
 			name: name,
 			deps: [],
 			options: {},
@@ -282,12 +283,12 @@ var Module = function (name, fn, next, app) {
 			exportsFn: function(){}
 		});
 		try {
-			fn.call(this, app, app.Modules);
+			fn.call(this, app, modulesController);
 		}
 		catch (e) {
 			console.log('error in module: ' + name);
 		}
-		this._setType(this.options.type || name.split(':')[0]);
+//		this._setType(this.options.type || name.split(':')[0]);
 		!this.deps.length ? next(this)	: this.waitForDeps(next);
 	};
 
@@ -296,8 +297,12 @@ var Module = function (name, fn, next, app) {
 			var self = this;
 			options = options || {};
 			if (options.autoInit) {
-				autoInits.push(moduleName);
-				this._closeInitHandler('MODULE_AUTO_INIT:'+this._toFullName(moduleName), options.as || _.parseName(this._toFullName(moduleName)).name)
+				var as = options.as || _.parseName(this._toFullName(moduleName)).name;
+				var o={};
+				AutoInits.add((o[this.name] = {name: moduleName, as: as}));
+
+//				autoInits.push(moduleName);
+//				this._closeInitHandler('MODULE_AUTO_INIT:'+this._toFullName(moduleName), options.as || _.parseName(this._toFullName(moduleName)).name)
 			}
 			this.deps.push({name: this._toFullName(moduleName), options: options});
 			return this;
@@ -344,64 +349,58 @@ var Module = function (name, fn, next, app) {
 			return	t.join(':') + name;
 		},
 
-		_setType: function (type) {
-			if (type.substr(-1) === 's')
-				type = type.slice(0, -1);
-			switch (type.toLowerCase()) {
-				case 'view': this.isView = true; break;
-				case 'model': this.isModel = true; break;
-				case 'collection': this.isCollection = true; break;
-				case 'plugin': this.isPlugin = true; break;
-				case 'well': this.isCore = true; break;
-			}
-			this.options['type'] = type;
-			return this;
-		},
+//		_setType: function (type) {
+//			if (type.substr(-1) === 's')
+//				type = type.slice(0, -1);
+//			switch (type.toLowerCase()) {
+//				case 'view': this.isView = true; break;
+//				case 'model': this.isModel = true; break;
+//				case 'collection': this.isCollection = true; break;
+//				case 'plugin': this.isPlugin = true; break;
+//				case 'well': this.isCore = true; break;
+//			}
+//			this.options['type'] = type;
+//			return this;
+//		},
 
-		_closeInitHandler: function (event, prop) {
-			var modules = this.app.Modules;
-			var self = this;
-			modules.on(event, function (module) {
-				self[prop] = module.init();
-				modules.off(event, null, self);
-			}, this);
-		},
-
-		_defineDeps: function () {
-			return;
-			var modules = this.app.Modules;
-			var prop;
-			var event;
-			var self = this;
-			_.each(this.deps, function (dependency) {
-				prop = dependency.options.as || _.parseName(dependency.name).name;
-				this[prop] = modules.get(dependency.name);
-				if (dependency.options.autoInit) {
-					this._closeInitHandler('MODULE_AUTO_INIT:' + dependency.name, prop);
-				}
-			}, this)
-		},
+//		_closeInitHandler: function (event, prop) {
+//			var self = this;
+//			modulesController.on(event, function (module) {
+//				self[prop] = module.init();
+//				modulesController.off(event, null, self);
+//			}, this);
+//		},
+//
+//		_defineDeps: function () {
+//			var self = this;
+//			_.each(this.deps, function (dependency) {
+//				var prop = dependency.options.as || _.parseName(dependency.name).name;
+//				this[prop] = modulesController.get(dependency.name);
+//				if (dependency.options.autoInit) {
+//					this._closeInitHandler('MODULE_AUTO_INIT:' + dependency.name, prop);
+//				}
+//			}, this)
+//		},
 
 		waitForDeps: function (next) {
 			// на продакше модули собраны в один файл.
 			// их не надо подгружать, нужно просто дождаться пока определятся нужные
-			if (this.app.isProduction) {
-				this._defineDeps();
+			if (app.isProduction) {
+//				this._defineDeps();
 				next(this);
 			}
 			else {
 				this.isComplete = false;
-				var Modules = this.app.Modules;
 				var depsNames = _.map(this.deps, function (dep) {
 					return dep.name;
 				});
-				var deps = _.clone(Modules.findMissing(depsNames));
+				var deps = _.clone(modulesController.findMissing(depsNames));
 				var self = this;
 				//на девелопменте разобраны по файлам и их надо подгружать
-				Modules.require(depsNames, function (err, modules) {
+				modulesController.require(depsNames, function (err, modules) {
 					if (err)
 						return console.log('Error in deps requiring...', err);
-					self._defineDeps();
+//					self._defineDeps();
 					next(self);
 				});
 			}
@@ -410,7 +409,22 @@ var Module = function (name, fn, next, app) {
 	});
 
 
-	function initializeAutoInited(app){
+var AutoInits = new (function () {
+	var mods = {};
+	function A () {}
+	A.prototype.add = function (opts) {
+		var key = Object.keys(opts)[0];
+		mods[key] = opts[key];
+	};
+
+	A.prototype.clear = function () {
+
+	};
+	return A;
+}())();
+
+
+function initializeAutoInited(){
 		//меняю последовательность, чтобы удобно было удалять
 		var arr = autoInits.slice(0).reverse();
 		var i = autoInits.length;
@@ -418,7 +432,7 @@ var Module = function (name, fn, next, app) {
 		while (--i >= 0) {
 			module = this.modules[arr[i]];
 			if (module) {
-				this.app.Modules.trigger('MODULE_AUTO_INIT:'+module.name, module);
+				modulesController.trigger('MODULE_AUTO_INIT:'+module.name, module);
 				arr.splice(i, 1);
 //				module.init();
 			}
@@ -427,17 +441,37 @@ var Module = function (name, fn, next, app) {
 		autoInits = arr.slice(0).reverse();
 	}
 
-	var Queue = function (names, next, app) {
+	var Queue = function (names, next, undefined) {
 		this.modules = {};
-		this.app = app;
 		this.names = names;
 		this.next = next;
-		app.Modules.on('MODULE_DEFINED', this.onModuleDefined, this);
+		if ((modulesController.findMissing(names)).length) {
+			modulesController.on('MODULE_DEFINED', this.onModuleDefined, this);
+			return app.vendorRequire(this._namesToPaths(names), function(){}, function (err) {
+				next(err);
+			});
+		}
+		else
+			return next(undefined, modulesController.pack(names));
 	};
 
 	_.extend(Queue.prototype, {
+		modules: {},
+		names: null,
+		next: null,
+		autoinits: [],
 		isQueueEmpty: function () {
 			return !this.names.length;
+		},
+
+		_namesToPaths: function (names) {
+			return _.map(names, function (name) {
+				return app.transformToPath(name);
+			}, this);
+		},
+
+		runAutoInits: function () {
+			debugger;
 		},
 
 		onModuleDefined: function (module, undefined) {
@@ -450,12 +484,12 @@ var Module = function (name, fn, next, app) {
 
 			//когда все модули загружены
 			if (this.isQueueEmpty()) {
-				var app = this.app;
-				app.Modules.off('MODULE_DEFINED', this.onModuleDefined, this);
+				modulesController.off('MODULE_DEFINED', this.onModuleDefined, this);
 				//формирую список модулей и их зависимостей
-				var exportList =_.extend(this.modules, app.Modules.getDeps(this.modules));
+				var exportList =_.extend(this.modules, modulesController.getDeps(this.modules));
 				//колбэк самого первого уровня вложенности (относительно очереди)
-				initializeAutoInited.call(this);
+//				initializeAutoInited.call(this);
+				this.runAutoInits();
 				this.next(undefined, exportList);
 			}
 			return this;
@@ -469,33 +503,16 @@ var Module = function (name, fn, next, app) {
 	});
 
 
-	var Modules = function(mainApp){
-		this.app = mainApp;
-		this.modules = {};
-		this.init();
-	};
+	var Modules = function(mainApp) {};
 
 	_.extend(Modules.prototype, EventsController(), {
+		modules: {},
 		get: function (name) {
 			return this.modules[name].exportsFn;
 		},
 
 		getModule: function (name) {
 			return this.modules[name];
-		},
-
-		define: function (moduleName, fn) {
-			var self = this;
-			new Module(moduleName, fn, function (module) {
-				self.modules[moduleName] = module;
-				self.trigger('MODULE_DEFINED', module);
-			}, this.app);
-			return this;
-		},
-
-		init: function () {
-			window.wellDefine = this.define.bind(this);
-			return this;
 		},
 
 		//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
@@ -514,49 +531,12 @@ var Module = function (name, fn, next, app) {
 
 		//AMD provider wrapper
 		require: function (modules, next, undefined) {
-			var missing = this.findMissing(modules);
-			//если модули уже загружены - вызов
-			if (!missing.length)
-				return next(undefined,this.pack(modules));
-
-			new Queue(_.clone(missing), next, this.app);
-
-			if (!this.app.isProduction) {
-				missing = _.map(missing, function (moduleName) {
-					return this.app.transformToPath(moduleName);
-				}, this);
-				this.vendorRequire(missing, function(){}, function (err) {
-					next(err);
-				});
-			}
+			new Queue(modules, next);
 			return this;
-		},
-
-		//override this method to configure your AMD vendor
-		requireConfig: function (options) {
-			requirejs.config({
-				urlArgs: options.cache === false ? (new Date()).getTime() :  '',
-				waitSeconds: 60,
-				baseUrl: options.appRoot,
-				paths: {
-					well: options.wellRoot,
-					plugins: options.pluginsRoot,
-					vendor: options.vendorRoot
-				}
-			});
-			return this;
-		},
-
-		//override this method to setup your AMD vendor
-		vendorRequire: function (modules, next, err) {
-			//requirejs call
-			require(modules, next, err);
 		},
 
 		exist: function (moduleName) {
-			return _.find(this.modules, function (module) {
-				return module.name === moduleName;
-			}, this);
+			return !!this.modules[moduleName];
 		},
 
 		findMissing: function (list) {
@@ -586,10 +566,12 @@ var Module = function (name, fn, next, app) {
 	});
 
 	var Main = function (options, undefined) {
+		app = this;
 		this.isProduction = options.isProduction;
 		this.options = options;
 		this.name = this.options.appName || 'WellApp';
 		window[this.name] = this;
+		window.wellDefine = this.define.bind(this);
 		//turn off amd support
 		if (typeof define === 'function' && define.amd)
 			define.amd = undefined;
@@ -600,13 +582,13 @@ var Module = function (name, fn, next, app) {
 		init: function () {
 			var options = this.options;
 			if (_.isFunction(options.vendorRequire))
-				Module.prototype.vendorRequire = options.vendorRequire;
+				Main.prototype.vendorRequire = options.vendorRequire;
 			if (_.isFunction(options.requireConfig))
-				Module.prototype.requireConfig = options.requireConfig;
+				Main.prototype.requireConfig = options.requireConfig;
 
-			this.Modules = new Modules(this);
+			modulesController = this.Modules = new Modules(this);
 			if (!this.isProduction)
-				this.Modules.requireConfig(options);
+				this.requireConfig(options);
 
 			if (!options.strategy)
 				return console.log('There is no application strategy defined');
@@ -619,8 +601,38 @@ var Module = function (name, fn, next, app) {
 				mod.init();
 			});
 		},
+
+		define: function (moduleName, fn) {
+			var self = this;
+			new Module(moduleName, fn, function (module) {
+				modulesController.modules[moduleName] = module;
+				modulesController.trigger('MODULE_DEFINED', module);
+			});
+			return this;
+		},
+
 		transformToPath: function (name) {
 			return name ? name.split(/(?=[A-Z])/).join('-').toLowerCase().split(':-').join('/') : name;
+		},
+
+		vendorRequire: function (modules, next, err) {
+			//requirejs call
+			require(modules, next, err);
+		},
+
+		//override this method to configure your AMD vendor
+		requireConfig: function (options) {
+			requirejs.config({
+				urlArgs: options.cache === false ? (new Date()).getTime() :  '',
+				waitSeconds: 60,
+				baseUrl: options.appRoot,
+				paths: {
+					well: options.wellRoot,
+					plugins: options.pluginsRoot,
+					vendor: options.vendorRoot
+				}
+			});
+			return this;
 		},
 
 		transformToName: function (path) {
