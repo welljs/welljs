@@ -28,7 +28,8 @@
 			this.Modules.require([options.strategy], function (err) {
 				if (err)
 					return console.log('Error in strategy loading! ', err);
-				self.Strategy = new(self.Modules.get(options.strategy));
+				var mod = self.Modules.getModule(options.strategy);
+				mod.init();
 			});
 		},
 		transformToPath: function (name) {

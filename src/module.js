@@ -20,9 +20,11 @@ var Module = function (name, fn, next, app) {
 
 	_.extend(Module.prototype, {
 		use: function (moduleName, options, undefined) {
+			var self = this;
 			options = options || {};
 			if (options.autoInit) {
 				autoInits.push(moduleName);
+				this._closeInitHandler('MODULE_AUTO_INIT:'+this._toFullName(moduleName), options.as || _.parseName(this._toFullName(moduleName)).name)
 			}
 			this.deps.push({name: this._toFullName(moduleName), options: options});
 			return this;
@@ -40,6 +42,10 @@ var Module = function (name, fn, next, app) {
 
 		get: function (prop) {
 			return this.options[prop];
+		},
+
+		init: function () {
+			return this.exportsFn.call(this.get('context') || this);
 		},
 
 		getAlias: function () {
@@ -79,12 +85,27 @@ var Module = function (name, fn, next, app) {
 			return this;
 		},
 
-		_defineDeps: function () {
+		_closeInitHandler: function (event, prop) {
 			var modules = this.app.Modules;
-			var name;
+			var self = this;
+			modules.on(event, function (module) {
+				self[prop] = module.init();
+				modules.off(event, null, self);
+			}, this);
+		},
+
+		_defineDeps: function () {
+			return;
+			var modules = this.app.Modules;
+			var prop;
+			var event;
+			var self = this;
 			_.each(this.deps, function (dependency) {
-				name = dependency.options.as || _.parseName(dependency.name).name;
-				this[name] = modules.get(dependency.name);
+				prop = dependency.options.as || _.parseName(dependency.name).name;
+				this[prop] = modules.get(dependency.name);
+				if (dependency.options.autoInit) {
+					this._closeInitHandler('MODULE_AUTO_INIT:' + dependency.name, prop);
+				}
 			}, this)
 		},
 

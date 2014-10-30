@@ -1,4 +1,4 @@
-	function initializeAutoInited(){
+	function initializeAutoInited(app){
 		//меняю последовательность, чтобы удобно было удалять
 		var arr = autoInits.slice(0).reverse();
 		var i = autoInits.length;
@@ -6,8 +6,9 @@
 		while (--i >= 0) {
 			module = this.modules[arr[i]];
 			if (module) {
+				this.app.Modules.trigger('MODULE_AUTO_INIT:'+module.name, module);
 				arr.splice(i, 1);
-				module.exportsFn.call(module);
+//				module.init();
 			}
 		}
 		//то что осталось сохраняю и обратно меняю последовательность
