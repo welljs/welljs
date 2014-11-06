@@ -13,6 +13,10 @@
 	};
 
 	_.extend(Queue.prototype, {
+		modules: {},
+		names: null,
+		next: null,
+		autoinits: [],
 		isQueueEmpty: function () {
 			return !this.names.length;
 		},
@@ -30,6 +34,7 @@
 
 			this.modules[module.name] = module;
 			this.names.splice(this.names.indexOf(module.name), 1);
+			if ()
 
 			//когда все модули загружены
 			if (this.isQueueEmpty()) {

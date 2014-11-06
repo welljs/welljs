@@ -98,7 +98,7 @@ var Module = function (name, fn, next) {
 				app.require(depsNames, function (err, modules) {
 					if (err)
 						return console.log('Error in deps requiring...', err);
-					self._defineDeps();
+//					self._defineDeps();
 					next(self);
 				});
 			}
