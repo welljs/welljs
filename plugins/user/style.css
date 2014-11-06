@@ -1,0 +1,27 @@
+.u{
+    color: #0000ff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.login{
+    display: none;
+}
+
+.form-holder{
+    width: 330px;
+    margin: 200px auto;
+}
+
+label {
+    display: block;
+}
+
+label span{
+    width: 85px;
+    display: inline-block;
+}
+
+button{
+    margin: 10px 0;
+}

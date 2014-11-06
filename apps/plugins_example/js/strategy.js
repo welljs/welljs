@@ -1,10 +1,15 @@
-wellDefine('Strategy', function (app, modules) {
-	this.use('Vendor:JqueryWell', {autoInit: true});
-	this.use('Vendor:UnderscoreWell', {autoInit: true});
-	this.use('Vendor:BackboneWell', {autoInit: true});
-	this.use('Plugins:User:Main', {as: 'User', autoInit: true});
+wellDefine('Strategy', function (app) {
+	this.use('Vendor:JqueryWell');
+	this.use('Vendor:UnderscoreWell');
+	this.use('Plugins:User:Main', {as: 'User'});
 	this.exports(function () {
-		var user = app.User = new this.User();
-		user.showLogin();
+		var user = app.User = new this.User({
+			onLoginSuccess: function () {
+				$('#site-container').html('<h3>Hello, ' + user.model.get('name') + '</h3>')
+			},
+			onLoginError: function (err) {
+				alert(err);
+			}
+		});
 	});
 });
