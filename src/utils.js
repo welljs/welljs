@@ -133,7 +133,11 @@
 	Utils.prototype.isObject = function (obj) {
 		var type = typeof obj;
 		return type === 'function' || type === 'object' && !!obj;
+	};
 
+	Utils.prototype.isString = function (obj) {
+		var type = typeof obj;
+		return type === 'string' && !!obj;
 	};
 
 	Utils.prototype.isArray = function (obj) {

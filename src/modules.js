@@ -1,9 +1,13 @@
 	var Modules = function(mainApp) {};
 
-	_.extend(Modules.prototype, EventsController(), {
+	_.extend(Modules.prototype, {
 		modules: {},
 		get: function (name) {
 			return this.modules[name].exportsFn;
+		},
+
+		add: function (module) {
+			return this.modules[module.name] = module;
 		},
 
 		getModule: function (name) {
@@ -13,7 +17,7 @@
 		//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
 		findBy: function (option, value) {
 			return _.find(this.modules, function (module) {
-				return module.props[option] === value;
+				return module.options[option] === value;
 			}, this);
 		},
 

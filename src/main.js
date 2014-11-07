@@ -13,7 +13,7 @@
 		this.init();
 	};
 
-	_.extend(Main.prototype, {
+	_.extend(Main.prototype, EventsController(), {
 		init: function () {
 			var options = this.options;
 			if (_.isFunction(options.vendorRequire))
@@ -38,11 +38,7 @@
 		},
 
 		define: function (moduleName, fn) {
-			var self = this;
-			new Module(moduleName, fn, function (module) {
-				modulesController.modules[moduleName] = module;
-				modulesController.trigger('MODULE_DEFINED', module);
-			});
+			new Module(moduleName, fn);
 			return this;
 		},
 
