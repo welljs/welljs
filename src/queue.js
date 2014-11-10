@@ -1,14 +1,15 @@
 	var Queue = function (names, next, undefined) {
 		this.modules = {};
 		this.names = modulesController.findMissing(names);
-		this.names = this._extendNames(names);
 		this.next = next;
-		if (this.names.length) {
-			app.on('MODULE_DEFINED', this.onModuleDefined, this);
-			this.enqueue(this.names);
-		}
-		else
+
+		if (!this.names.length)
 			return next(undefined, modulesController.pack(names));
+
+		app.on('MODULE_DEFINED', this.onModuleDefined, this);
+		this._extendNames();
+		this.orderedDeps = this.names.slice(0);
+		this.enqueue(this.names);
 	};
 
 	_.extend(Queue.prototype, {
@@ -18,7 +19,8 @@
 		},
 
 		_extendNames: function (args) {
-			return _.map(args, function (arg) {
+			args = args || this.names;
+			this.names = _.map(args, function (arg) {
 				return _.isString(arg) ? {name: arg, options: {}} : arg;
 			})
 		},
@@ -33,15 +35,7 @@
 			if (this.isModuleFromThisQueue(module.name)) {
 				this.handleModule(module);
 				var deps = module.getDeps();
-				if (deps.length) {
-					// надо заставить модуль слушать MODULE_DEFINED своих зависимостей.
-					// когда все задефайнятся - инициализировать его
-					this.enqueue(deps);
-				}
-				else {
-					this.tryToComplete();
-				}
-
+				deps.length ? this.enqueue(deps) : (this.isQueueEmpty() && this.complete());
 			}
 		},
 
@@ -62,23 +56,30 @@
 		enqueue: function (args) {
 			var self = this;
 			this.names = _.merge(this.names, args);
-			return app.vendorRequire(this._namesToPaths(this.names), function(){}, function (err) {
-				self.next(err);
+			return app.vendorRequire(this._namesToPaths(this.names), noop, function (err) {
+				self.complete(err);
 			});
 		},
 
-		tryToComplete: function () {
-			if (this.isQueueEmpty()) {
-				this.complete();
-			}
+		complete: function (err) {
+			app.off('MODULE_DEFINED', this.onModuleDefined, this);
+			var exportList =_.extend(this.modules, modulesController.getDeps(this.modules));
+			this.init();
+			this.next(err, exportList);
 		},
 
-		complete: function () {
-			app.off('MODULE_DEFINED', this.onModuleDefined, this);
-			//формирую список модулей и их зависимостей
-			var exportList =_.extend(this.modules, modulesController.getDeps(this.modules));
-			//колбэк самого первого уровня вложенности (относительно очереди)
-			this.next(undefined, exportList);
+		init: function (deps, context) {
+			var self = this;
+			_.each(deps || this.orderedDeps, function (dep) {
+				var mod = modulesController.getModule(dep.name);
+				var deps = mod.getDeps();
+				if (deps.length) {
+					self.init(deps, mod);
+					context && (context[dep.options.as || _.parseName(dep.name).name] = mod.init());
+				}
+				else
+					context[dep.options.as || _.parseName(dep.name).name] = mod.init();
+			})
 		},
 
 		isModuleFromThisQueue: function (moduleName) {
