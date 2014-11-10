@@ -1,5 +1,5 @@
 (function(){
-	 'use strict'; 
+	'use strict'; 
  	var app;
 	var modulesController;
 	var noop = function(){};
@@ -320,7 +320,6 @@
 		},
 
 		init: function () {
-			console.log('xxx: ', this.name);
 			return this.exportsFn.call(this.get('context') || this);
 		},
 
