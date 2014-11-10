@@ -8,7 +8,7 @@
 
 		app.on('MODULE_DEFINED', this.onModuleDefined, this);
 		this._extendNames();
-		this.orderedDeps = this.names.slice(0);
+		this.orderedMods = this.names.slice(0);
 		this.enqueue(this.names);
 	};
 
@@ -63,23 +63,27 @@
 
 		complete: function (err) {
 			app.off('MODULE_DEFINED', this.onModuleDefined, this);
-			var exportList =_.extend(this.modules, modulesController.getDeps(this.modules));
-			this.init();
-			this.next(err, exportList);
+			this.initModules();
+			this.next(err);
 		},
 
-		init: function (deps, context) {
+		initModules: function (deps, context) {
 			var self = this;
-			_.each(deps || this.orderedDeps, function (dep) {
+			_.each(deps || this.orderedMods, function (dep) {
 				var mod = modulesController.getModule(dep.name);
 				var deps = mod.getDeps();
+				var prop = dep.options.as || _.parseName(dep.name).name;
 				if (deps.length) {
-					self.init(deps, mod);
-					context && (context[dep.options.as || _.parseName(dep.name).name] = mod.init());
+					self.initModules(deps, mod);
+					context && self.bindProp(context, prop, dep.options.autoInit !== false ? mod.init() : modulesController.get(dep.name));
 				}
 				else
-					context[dep.options.as || _.parseName(dep.name).name] = mod.init();
-			})
+					context && self.bindProp(context, prop, dep.options.autoInit !== false ? mod.init() : modulesController.get(dep.name));
+			});
+		},
+
+		bindProp: function (context, prop, value) {
+			context[prop] = value;
 		},
 
 		isModuleFromThisQueue: function (moduleName) {
