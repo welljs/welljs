@@ -33,8 +33,8 @@
 		},
 
 		findMissing: function (list) {
-			return _.filter(list, function (moduleName) {
-				return !this.exist(moduleName);
+			return _.filter(list, function (mod) {
+				return !this.exist(_.isString(mod) ? mod : mod.name);
 			}, this);
 		},
 

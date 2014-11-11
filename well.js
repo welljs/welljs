@@ -1,5 +1,5 @@
 (function(){
-	'use strict'; 
+	 'use strict'; 
  	var app;
 	var modulesController;
 	var noop = function(){};
@@ -283,7 +283,6 @@
 				name: name,
 				deps: [],
 				options: {},
-				isComplete: true,
 				exportsFn: noop
 			});
 			try {
@@ -361,7 +360,7 @@
 			return next(undefined, modulesController.pack(names));
 
 		app.on('MODULE_DEFINED', this.onModuleDefined, this);
-		this._extendNames();
+		this.names = this._extendNames(this.names);
 		this.orderedMods = this.names.slice(0);
 		this.enqueue(this.names);
 	};
@@ -373,13 +372,12 @@
 		},
 
 		_extendNames: function (args) {
-			args = args || this.names;
-			this.names = _.map(args, function (arg) {
+			return _.map(args, function (arg) {
 				return _.isString(arg) ? {name: arg, options: {}} : arg;
 			})
 		},
 
-		_namesToPaths: function (args) {
+		_toPaths: function (args) {
 			return _.map(args, function (arg) {
 				return app.transformToPath(arg.name);
 			}, this);
@@ -388,8 +386,10 @@
 		onModuleDefined: function (module) {
 			if (this.isModuleFromThisQueue(module.name)) {
 				this.handleModule(module);
-				var deps = module.getDeps();
-				deps.length ? this.enqueue(deps) : (this.isQueueEmpty() && this.complete());
+				var deps = modulesController.findMissing(module.getDeps());
+				deps.length 
+					? this.enqueue(deps)
+					: (this.isQueueEmpty() && this.complete());
 			}
 		},
 
@@ -410,7 +410,7 @@
 		enqueue: function (args) {
 			var self = this;
 			this.names = _.merge(this.names, args);
-			return app.vendorRequire(this._namesToPaths(this.names), noop, function (err) {
+			return app.vendorRequire(this._toPaths(this.names), noop, function (err) {
 				self.complete(err);
 			});
 		},
@@ -418,7 +418,8 @@
 		complete: function (err) {
 			app.off('MODULE_DEFINED', this.onModuleDefined, this);
 			this.initModules();
-			this.next(err);
+			var exportList =_.extend(this.modules, modulesController.getDeps(this.modules));
+			this.next(err, exportList);
 		},
 
 		initModules: function (deps, context) {
@@ -480,8 +481,8 @@
 		},
 
 		findMissing: function (list) {
-			return _.filter(list, function (moduleName) {
-				return !this.exist(moduleName);
+			return _.filter(list, function (mod) {
+				return !this.exist(_.isString(mod) ? mod : mod.name);
 			}, this);
 		},
 

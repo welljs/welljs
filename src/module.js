@@ -3,7 +3,6 @@
 				name: name,
 				deps: [],
 				options: {},
-				isComplete: true,
 				exportsFn: noop
 			});
 			try {
