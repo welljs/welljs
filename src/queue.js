@@ -73,12 +73,9 @@
 				var mod = modulesController.getModule(dep.name);
 				var deps = mod.getDeps();
 				var prop = dep.options.as || _.parseName(dep.name).name;
-				if (deps.length) {
+				if (deps.length)
 					self.initModules(deps, mod);
-					context && self.bindProp(context, prop, dep.options.autoInit !== false ? mod.init() : modulesController.get(dep.name));
-				}
-				else
-					context && self.bindProp(context, prop, dep.options.autoInit !== false ? mod.init() : modulesController.get(dep.name));
+				context && self.bindProp(context, prop, dep.options.autoInit !== false ? mod.init() : modulesController.get(dep.name));
 			});
 		},
 
