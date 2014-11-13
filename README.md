@@ -6,7 +6,7 @@ __Welljs__ - это, обертка для файловых загрузчико
 ```JavaScript
 // в любой модуль в качестве аргумента передается
 // ссылка на приложени
-wellDefine('Views:Pages:AboutWell', function(app) {
+wellDefine('Views:Pages:Overview', function(app) {
   // зависимости можно подключать последовательно одна за другой, 
   // или цепочкой this.use().use().use().options().exports();
   this.use('Views:Basic:Page', {as: 'BasicPage'});
@@ -16,7 +16,7 @@ wellDefine('Views:Pages:AboutWell', function(app) {
   // тут хранятся дополнительные параметы, к которым можно обратиться 
   // через someModule.get('paramName')
   this.set({
-    template: 'Pages:AboutWell',
+    template: 'Pages:Overview',
     otherOption: 'paramValue'
   });
   // эта колбэк-функция вызовется при app.Module.get('Views:Pages:AboutWell');
