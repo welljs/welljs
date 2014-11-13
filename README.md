@@ -8,14 +8,14 @@ __Welljs__ - это, обертка для файловых загрузчико
 // ссылка на приложени
 wellDefine('Views:Pages:AboutWell', function(app) {
   // зависимости можно подключать последовательно одна за другой, 
-  // или цепочкой this.use().use().use().options().export();
-  this.use('Views:Basic:Page');
+  // или цепочкой this.use().use().use().options().exports();
+  this.use('Views:Basic:Page', {as: 'BasicPage'});
   this.use('Views:Partials:Sidebar');
   //true - autoInit when downloaded
-  this.use('Vendor:HighlightPack', true);
+  this.use('Vendor:HighlightPack');
   // тут хранятся дополнительные параметы, к которым можно обратиться 
-  // через someModule.getOption('paramName')
-  this.options({
+  // через someModule.get('paramName')
+  this.set({
     template: 'Pages:AboutWell',
     otherOption: 'paramValue'
   });
@@ -23,7 +23,7 @@ wellDefine('Views:Pages:AboutWell', function(app) {
   this.exports(function(args) {
     // module code
     // all the dependencies are available here
-    return app.Modules.get('Views:Basic:Page').extend({
+    return this.BasicPage.extend({
       //Backbone page view
     });
   });
@@ -39,8 +39,8 @@ wellDefine('Views:Pages:AboutWell', function(app) {
 
 1) Объявить его в секции `use()` как зависимость
 ```javascript
-wellDefine('SomeModule', function(){
-  this.use('SomeOtherModule');
+wellDefine('MyModule', function(){
+  this.use('Utils:Helper', {as: 'AppHelper'});
 });
 ```
 
@@ -64,8 +64,7 @@ app.Modules.require([
 
 После загрузки можно использовать:
 ```javascript
-var MyModule = app.Modules.get('Foo:Bar:MyModule');
-var myModule = new MyModule({option: 'some option'});
+var appHelper = new this.AppHelper({option: 'some option'});
 ```
 
 ##Features
@@ -76,28 +75,4 @@ var myModule = new MyModule({option: 'some option'});
 * __Библиотеки и стороние плагины__ Для того чтобы подключить стороннюю библиотеку к проекту, нужно только создать модуль и поместить код библиотеки в секцию `exports`. После этого она доступна как зависимость, и ее можно вызывать именно там где она нужна. 
 
 
-[Документация и пример к проекту](http://welljs.org/#!doc )
-
-##LICENSE
-
-The MIT License (MIT)
-
-Copyright (c) 2014 welljs
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+[Документация и пример к проекту](http://welljs.org/#documentation )
