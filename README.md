@@ -41,14 +41,18 @@ wellDefine('Views:Pages:Overview', function(app) {
 ```javascript
 wellDefine('MyModule', function(){
   this.use('Utils:Helper', {as: 'AppHelper'});
+  this.exports(function(){
+    //После загрузки можно использовать:    
+    var appHelper = new this.AppHelper({option: 'some option'});
+  });
 });
 ```
 
-2) Через метод `Modules.require()` в любом месте программы
+2) Через метод `app.require()` в любом месте программы
 ```javascript
 // app - неймспес приложения. доступен везде
 // Modules - контроллер модулей
-app.Modules.require([
+app.require([
     'Full:ModuleName:Foo', 
     'Full:ModuleName:Bar', 
     'Full:ModuleName:Baz'
@@ -60,11 +64,6 @@ app.Modules.require([
     // modules - загруженные модули
   }
 );
-```
-
-После загрузки можно использовать:
-```javascript
-var appHelper = new this.AppHelper({option: 'some option'});
 ```
 
 ##Features
