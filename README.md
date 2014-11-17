@@ -11,8 +11,8 @@ wellDefine('Views:Pages:Overview', function(app) {
   // или цепочкой this.use().use().use().options().exports();
   this.use('Views:Basic:Page', {as: 'BasicPage'});
   this.use('Views:Partials:Sidebar');
-  //true - autoInit when downloaded
-  this.use('Vendor:HighlightPack');
+  //отменить автоинициализацию по окончанию загрузки
+  this.use('Vendor:HighlightPack', {autonInit: false});
   // тут хранятся дополнительные параметы, к которым можно обратиться 
   // через someModule.get('paramName')
   this.set({
