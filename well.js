@@ -383,10 +383,24 @@
 			}, this);
 		},
 
+		_exist: function (a) {
+			return !!_.find(this.names, function (m) {
+				return a.name === m.name;
+			});
+		},
+
+		_findMissing: function (mods) {
+			var r = [];
+			_.each(mods, function (m) {
+				!this._exist(m) && !modulesController.exist(m.name) && r.push(m);
+			}, this);
+			return r;
+		},
+
 		onModuleDefined: function (module) {
 			if (this.isModuleFromThisQueue(module.name)) {
 				this.handleModule(module);
-				var deps = modulesController.findMissing(module.getDeps());
+				var deps = this._findMissing(module.getDeps());
 				deps.length 
 					? this.enqueue(deps)
 					: (this.isQueueEmpty() && this.complete());
