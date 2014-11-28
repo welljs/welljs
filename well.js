@@ -374,7 +374,7 @@
 		app.on('MODULE_DEFINED', this.onModuleDefined, this);
 		this.names = this._extendNames(this.names);
 		this.orderedMods = this.names.slice(0);
-		this.enqueue(this.names);
+		!app.isProduction && this.enqueue(this.names);
 	};
 
 	_.extend(Queue.prototype, {
