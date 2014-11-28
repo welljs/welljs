@@ -1,5 +1,5 @@
 (function(){
-	'use strict'; 
+	 'use strict'; 
  /*
  The MIT License (MIT)
  Copyright (c) 2014 vitalii.vorobioff@gmail.com
@@ -364,8 +364,12 @@
 		this.names = modulesController.findMissing(names);
 		this.next = next;
 
-		if (!this.names.length)
-			return next(undefined, modulesController.pack(names));
+		if (!this.names.length) {
+			this.names = this._extendNames(names);
+			this.orderedMods = this.names.slice(0);
+			this.modules = modulesController.pack(names);
+			return this.complete();
+		}
 
 		app.on('MODULE_DEFINED', this.onModuleDefined, this);
 		this.names = this._extendNames(this.names);
@@ -406,7 +410,11 @@
 		},
 
 		onModuleDefined: function (module) {
-			if (this.isModuleFromThisQueue(module.name)) {
+			if (app.isProduction) {
+				this.handleModule(module);
+				(this.isQueueEmpty() && this.complete());
+			}
+			else if (this.isModuleFromThisQueue(module.name)) {
 				this.handleModule(module);
 				var deps = this._findMissing(module.getDeps());
 				deps.length 
