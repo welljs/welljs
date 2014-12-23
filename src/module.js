@@ -21,6 +21,14 @@
 			return this;
 		},
 
+		cloneOriginal: function (options) {
+			options = options || {};
+			this.set({isClone: true});
+			//добавляется приставка, для того чтобы скачать его из оригинального проекта
+			this.deps.push({name: 'Original:' + this._toFullName(this.name), options: options});
+			return this;
+		},
+
 		set: function (options, value) {
 			if (_.isString(options) && !!value)
 				this.options[options] = value;

@@ -2,6 +2,8 @@
 		this.modules = {};
 		this.names = modulesController.findMissing(names);
 		this.next = next;
+		this.clones = [];
+		this.waitingForOriginal = [];
 
 		if (!this.names.length) {
 			this.names = this._extendNames(names);
@@ -63,9 +65,24 @@
 		},
 
 		handleModule: function (module) {
-			modulesController.add(module);
+			var m, len, i;
 			var names = this.names;
-			var i, m, len;
+			var origName = 'Original:'+module.name;
+			if (module.get('isClone')) {
+				this.clones.push(origName);
+				modulesController.add(module);
+			}
+			//is someone's original
+			else if ((i = this.clones.indexOf(origName)) !== -1) {
+				this.clones.splice(i, 1);
+				module.name = origName;
+				modulesController.add(module);
+			}
+			// plain module
+			else {
+				modulesController.add(module);
+			}
+
 			this.modules[module.name] = module;
 			for (i = 0, len = names.length; i < len; i++ ) {
 				m = names[i];
@@ -110,7 +127,7 @@
 		isModuleFromThisQueue: function (moduleName) {
 			return !!_.find(this.names, function (module) {
 				return module.name === moduleName;
-			});
+			}) || this.clones.indexOf('Original:' + moduleName) !== -1;
 		}
 	});
 
