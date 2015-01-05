@@ -63,11 +63,7 @@
 				urlArgs: options.cache === false ? (new Date()).getTime() :  '',
 				waitSeconds: 60,
 				baseUrl: options.appRoot,
-				paths: {
-					well: options.wellRoot,
-					plugins: options.pluginsRoot,
-					vendor: options.vendorRoot
-				}
+				paths: _.extend({}, options.paths)
 			});
 			return this;
 		},
