@@ -54,6 +54,12 @@
 				}, this)
 			}, this);
 			return res;
+		},
+
+		cloneModule: function (module) {
+			_.renameProp(this.modules, module.name, 'Original:'+module.name);
+			this.add(module);
+			return module;
 		}
 
 	});

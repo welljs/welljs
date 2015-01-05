@@ -2,14 +2,20 @@
 		this.modules = {};
 		this.names = modulesController.findMissing(names);
 		this.next = next;
+		this.clones = [];
+		this.waitingForOriginal = [];
 
-		if (!this.names.length)
-			return next(undefined, modulesController.pack(names));
+		if (!this.names.length) {
+			this.names = this._extendNames(names);
+			this.orderedMods = this.names.slice(0);
+			this.modules = modulesController.pack(names);
+			return this.complete();
+		}
 
 		app.on('MODULE_DEFINED', this.onModuleDefined, this);
 		this.names = this._extendNames(this.names);
 		this.orderedMods = this.names.slice(0);
-		this.enqueue(this.names);
+		!app.isProduction && this.enqueue(this.names);
 	};
 
 	_.extend(Queue.prototype, {
@@ -45,7 +51,11 @@
 		},
 
 		onModuleDefined: function (module) {
-			if (this.isModuleFromThisQueue(module.name)) {
+			if (app.isProduction) {
+				this.handleModule(module);
+				(this.isQueueEmpty() && this.complete());
+			}
+			else if (this.isModuleFromThisQueue(module.name)) {
 				this.handleModule(module);
 				var deps = this._findMissing(module.getDeps());
 				deps.length 
@@ -55,9 +65,24 @@
 		},
 
 		handleModule: function (module) {
-			modulesController.add(module);
+			var m, len, i;
 			var names = this.names;
-			var i, m, len;
+			var origName = 'Original:'+module.name;
+			if (module.get('isClone')) {
+				this.clones.push(origName);
+				modulesController.add(module);
+			}
+			//is someone's original
+			else if ((i = this.clones.indexOf(origName)) !== -1) {
+				this.clones.splice(i, 1);
+				module.name = origName;
+				modulesController.add(module);
+			}
+			// plain module
+			else {
+				modulesController.add(module);
+			}
+
 			this.modules[module.name] = module;
 			for (i = 0, len = names.length; i < len; i++ ) {
 				m = names[i];
@@ -102,7 +127,7 @@
 		isModuleFromThisQueue: function (moduleName) {
 			return !!_.find(this.names, function (module) {
 				return module.name === moduleName;
-			});
+			}) || this.clones.indexOf('Original:' + moduleName) !== -1;
 		}
 	});
 
