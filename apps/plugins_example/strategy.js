@@ -1,6 +1,7 @@
 wellDefine('Strategy', function (app) {
-	this.use('Vendor:JqueryWell');
-	this.use('Vendor:UnderscoreWell');
+	this.use('Vendor:Jquery');
+	this.use('Vendor:Underscore');
+	this.use('Vendor:Backbone');
 	this.use('Plugins:User:Main', {as: 'User'});
 	this.exports(function () {
 		var user = app.User = new this.User({
